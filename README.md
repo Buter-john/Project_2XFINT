@@ -62,6 +62,23 @@ Project_2XFINT/
 
 ---
 
+## 👤 Compte de test
+
+Créé via `node prisma/seed.js` :
+
+| Email | Mot de passe | Rôle |
+|---|---|---|
+| `sylvie@gmail.com` | `password123` | EMPLOYE |
+
+## 🔑 Tester la connexion (login)
+
+```bash
+curl -X POST http://localhost:5002/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"sylvie@gmail.com","password":"password123"}'
+```
+Renvoie un `token` JWT (valable 8h) à utiliser ensuite dans l'en-tête `Authorization: Bearer <token>` pour accéder aux routes protégées.
+
 ## ✅ Vérifier que ça fonctionne
 
 Route de test (health check) :
@@ -82,7 +99,7 @@ Doit renvoyer :
 | 1 | Structure du projet, Git, `.gitignore` | ✅ Fait |
 | 2 | Serveur Express minimal + connexion MySQL via Prisma | ✅ Fait |
 | 3 | Modèle de données (`schema.prisma`) | ✅ Fait |
-| 4 | Authentification JWT | 🚧 En cours |
+| 4 | Authentification JWT (login, hash bcrypt, middleware de protection) | ✅ Fait |
 | 5 | CRUD des demandes de congés | ⏳ À venir |
 | 6 | Frontend React/TS/Vite + page de login | ⏳ À venir |
 | 7 | Dashboard & affichage des demandes | ⏳ À venir |
