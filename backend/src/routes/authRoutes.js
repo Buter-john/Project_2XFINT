@@ -7,7 +7,7 @@ router.post('/login', login);
 
 router.get('/me', authMiddleware , (req , res) =>{
     res.json ({
-        mmessage : ' tu es bien connecté ' , user : req.user 
+        mmessage : ' tu es bien connecté ' , user : req.user,
     });
 })
 

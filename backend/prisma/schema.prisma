@@ -37,4 +37,35 @@ model User {
   department   Department    @relation(fields: [departmentId], references: [id])
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  requests     LeaveRequest[]
+}
+
+enum LeaveType {
+  CP
+  RTT
+  SANS_SOLDES
+  MALADIE
+  FORMATION
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model LeaveRequest {
+
+  id          String        @id @default(uuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  type        LeaveType
+  startDate   DateTime
+  endDate     DateTime
+  workingDays Decimal       @db.Decimal(4, 1)
+  status      RequestStatus @default(PENDING)
+  comment     String?       @db.Text
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
 }

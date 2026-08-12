@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const authRoutes = require('./routes/authRoutes');
+const requestRoutes = require('./routes/requestRoutes')
 
 const app = express();
 const PORT = process.env.PORT || 5003 ;
@@ -12,6 +13,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/auth',authRoutes);
+app.use('/api/requests', requestRoutes);
 
 
 app.listen(PORT, () => {

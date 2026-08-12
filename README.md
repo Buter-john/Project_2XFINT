@@ -84,6 +84,30 @@ curl -X POST http://localhost:5002/api/auth/login \
 
 La réponse contient un token JWT (valable 8h), à passer ensuite dans l'en-tête `Authorization: Bearer <token>` pour accéder aux routes protégées.
 
+## Demandes de congés (CRUD)
+
+Toutes les routes ci-dessous nécessitent l'en-tête `Authorization: Bearer <token>`.
+
+```bash
+# Créer une demande
+curl -X POST http://localhost:5002/api/requests \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TON_TOKEN" \
+  -d '{"type":"CP","startDate":"2026-08-10","endDate":"2026-08-14","comment":"vacances"}'
+
+# Lister mes demandes
+curl http://localhost:5002/api/requests -H "Authorization: Bearer TON_TOKEN"
+
+# Modifier une demande en attente
+curl -X PUT http://localhost:5002/api/requests/ID_DEMANDE \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TON_TOKEN" \
+  -d '{"type":"RTT","startDate":"2026-08-17","endDate":"2026-08-18","comment":"modifie"}'
+
+# Annuler une demande en attente
+curl -X DELETE http://localhost:5002/api/requests/ID_DEMANDE -H "Authorization: Bearer TON_TOKEN"
+```
+
 ## Notes
 
 - `.env` n'est jamais commité (il est dans `.gitignore`).
