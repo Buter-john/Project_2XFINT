@@ -7,8 +7,18 @@ Reconstruction pédagogique du portail de gestion de congés SUP Herman : une ap
 ```
 Project_2XFINT/
 ├── backend/     API REST (Node.js, Express, Prisma, MySQL)
-└── frontend/    Interface utilisateur (React, TypeScript, Vite) — à venir
+└── frontend/    Interface utilisateur (React, TypeScript, Vite)
 ```
+
+## Installation — Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+L'interface tourne sur `http://localhost:5174` (Vite choisit un port libre si 5173 est déjà pris). La page `/login` permet de se connecter avec le compte de test ci-dessous.
 
 ## Prérequis
 
