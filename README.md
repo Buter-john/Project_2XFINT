@@ -118,6 +118,10 @@ curl -X PUT http://localhost:5002/api/requests/ID_DEMANDE \
 curl -X DELETE http://localhost:5002/api/requests/ID_DEMANDE -H "Authorization: Bearer TON_TOKEN"
 ```
 
+## Limitation connue
+
+La session n'est pas encore restaurée après un rechargement complet de la page (le token reste dans localStorage mais l'utilisateur est deconnecte visuellement) — a corriger dans un prochain chapitre.
+
 ## Notes
 
 - `.env` n'est jamais commité (il est dans `.gitignore`).
