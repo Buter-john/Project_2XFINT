@@ -34,6 +34,20 @@ async function getMyRequests(req, res) {
 }
 
 
+async function getPendingRequest (req , res ){
+
+    const request = await prisma.leaveRequest.findMany({
+        where : { status : 'PENDING'} , 
+        include :{ user :{ select : { name : true , email : true }
+        }} , 
+
+        orderBy : { createdAt : 'asc'},
+    });
+
+    res.json (request);
+}
+
+
 async function updateRequest ( req , res ){
 
     const { id } = req.params;
@@ -101,4 +115,4 @@ async function cancelRequest ( req , res ){
 
 }
 
-module.exports = { createRequest, getMyRequests , updateRequest , cancelRequest};
+module.exports = { createRequest, getMyRequests , updateRequest , cancelRequest , getPendingRequest};

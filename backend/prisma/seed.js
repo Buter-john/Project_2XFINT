@@ -10,7 +10,7 @@ async function main (){
     const hashedPassword = await bcrypt.hash('password123',10); 
 
     await prisma.user.create({
-    
+
         data : {
             name : 'Sylvie',
             email: 'sylvie@gmail.com',
@@ -20,7 +20,19 @@ async function main (){
         },
     });
 
-    console.log('seed terminé : 1 departement + 1 utilisateur crééer');
+    const hashedRhPassword = await bcrypt.hash('Suph3rm4n!', 10);
+
+    await prisma.user.create({
+        data : {
+            name : 'RH',
+            email: 'rh@supherman.com',
+            password: hashedRhPassword,
+            role: 'RH',
+            departmentId: department.id,
+        },
+    });
+
+    console.log('seed terminé : 1 departement + 2 utilisateurs crééer');
 
 }
 

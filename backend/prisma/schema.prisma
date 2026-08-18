@@ -38,6 +38,8 @@ model User {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   requests     LeaveRequest[]
+  validations   ValidationHistory[] @relation("Validator")
+  notifications Notification[]
 }
 
 enum LeaveType {
@@ -67,5 +69,32 @@ model LeaveRequest {
   comment     String?       @db.Text
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  validations ValidationHistory[]
 
+}
+
+enum ValidationAction {
+  APPROVE
+  REJECT
+}
+
+model ValidationHistory {
+  id          Int              @id @default(autoincrement())
+  requestId   String
+  request     LeaveRequest     @relation(fields: [requestId], references: [id])
+  validatorId String
+  validator   User             @relation("Validator", fields: [validatorId], references: [id])
+  action      ValidationAction
+  comment     String?          @db.Text
+  createdAt   DateTime         @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

@@ -70,11 +70,12 @@ npm run dev
 
 L'API tourne sur `http://localhost:5002` (le port dépend de la valeur définie dans `.env`).
 
-## Compte de test
+## Comptes de test
 
 | Email | Mot de passe | Rôle |
 |---|---|---|
 | sylvie@gmail.com | password123 | EMPLOYE |
+| rh@supherman.com | Suph3rm4n! | RH |
 
 ## Tester l'API
 
@@ -117,6 +118,26 @@ curl -X PUT http://localhost:5002/api/requests/ID_DEMANDE \
 # Annuler une demande en attente
 curl -X DELETE http://localhost:5002/api/requests/ID_DEMANDE -H "Authorization: Bearer TON_TOKEN"
 ```
+
+## Validation des demandes (RH/Manager)
+
+Routes reservees aux roles `MANAGER` et `RH` :
+
+```bash
+# Voir les demandes en attente
+curl http://localhost:5002/api/requests/pending -H "Authorization: Bearer TOKEN_RH"
+
+# Approuver
+curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/approve -H "Authorization: Bearer TOKEN_RH"
+
+# Rejeter (avec motif)
+curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/reject \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN_RH" \
+  -d '{"comment":"motif du refus"}'
+```
+
+Chaque decision cree une notification pour le collaborateur concerne.
 
 ## Limitation connue
 

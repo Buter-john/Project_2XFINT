@@ -1,9 +1,12 @@
 const express = require('express');
-const { createRequest , getMyRequests , updateRequest , cancelRequest } = require('../controllers/requestController');
+const { createRequest , getMyRequests , updateRequest , cancelRequest, getPendingRequest } = require('../controllers/requestController');
 const router = express.Router();
 const authMiddleware = require('../middlewares/authMiddleware');
+const requireRole = require ('../middlewares/requireRole')
 
 router.use(authMiddleware);
+
+router.get ('/pending' , requireRole('MANAGER', 'RH') , getPendingRequest)
 
 router.post ('/', createRequest);
 
