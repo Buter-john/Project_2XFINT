@@ -41,4 +41,19 @@ async function login ( req , res ) {
 
 }
 
-module.exports = { login } ;
+async function getMe(req, res) {
+    const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+
+    if (!user) {
+        return res.status(404).json({ message: 'Utilisateur introuvable' });
+    }
+
+    res.json({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+    });
+}
+
+module.exports = { login, getMe } ;

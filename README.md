@@ -139,10 +139,6 @@ curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/reject \
 
 Chaque decision cree une notification pour le collaborateur concerne.
 
-## Limitation connue
-
-La session n'est pas encore restaurée après un rechargement complet de la page (le token reste dans localStorage mais l'utilisateur est deconnecte visuellement) — a corriger dans un prochain chapitre.
-
 ## Notes
 
 - `.env` n'est jamais commité (il est dans `.gitignore`).
