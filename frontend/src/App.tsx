@@ -3,13 +3,16 @@ import Login from './features/auth/Login'
 import ProtectedRoute from './routes/ProtectedRoute';
 import Dashboard from './features/dashboard/Dashboard';
 import Validation from './features/validation/Validation';
+import Calendar from './features/calendar/Calendar';
+
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}/>  
-      <Route path="/validation" element ={<ProtectedRoute roles ={['MANAGER', 'RH']}><Validation/> </ProtectedRoute>}/>      
+      <Route path="/validation" element ={<ProtectedRoute roles ={['MANAGER', 'RH']}><Validation/> </ProtectedRoute>}/>
+      <Route path= "/calendar" element= {<ProtectedRoute><Calendar/></ProtectedRoute>}/>   
       <Route path="/" element={<Navigate to="/login" />} />
     </Routes>
   );

@@ -115,4 +115,22 @@ async function cancelRequest ( req , res ){
 
 }
 
-module.exports = { createRequest, getMyRequests , updateRequest , cancelRequest , getPendingRequest};
+async function getCalendarRequests (req , res) {
+
+    const requests = await prisma.leaveRequest.findMany({
+        where : { status : 'APPROVED'},
+        include :{
+            user: {
+                select :{
+                    name : true,
+                    department : { select : {name : true} },
+                },
+            },
+        },
+        orderBy :{ startDate:'asc'}, 
+    });
+
+    res.json(requests);
+}
+
+module.exports = { createRequest, getMyRequests , updateRequest , cancelRequest , getPendingRequest , getCalendarRequests};
