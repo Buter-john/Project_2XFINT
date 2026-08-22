@@ -16,6 +16,10 @@ async function login ( req , res ) {
         });
     }
 
+    if (!user.isActive) {
+  return res.status(403).json({ message: 'Ce compte a été désactivé' });
+}
+
     const passwordMatches = await bcrypt.compare(password,user.password);
 
     if (!passwordMatches){
