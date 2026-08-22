@@ -40,6 +40,7 @@ model User {
   requests     LeaveRequest[]
   validations   ValidationHistory[] @relation("Validator")
   notifications Notification[]
+  isActive    Boolean     @default(true)
 }
 
 enum LeaveType {

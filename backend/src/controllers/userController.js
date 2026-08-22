@@ -1,0 +1,66 @@
+const bcrypt = require ('bcryptjs');
+const prisma = require('../config/prisma');
+
+
+
+async function getUsers (req , res){
+
+    const users = await prisma.user.findMany({
+        select : { 
+            id : true , name: true , email : true , role : true , 
+            isActive : true , department : { select : { name : true }},
+        },
+        orderBy : { name : 'asc' }, 
+    });
+    res.json(users);
+}
+
+async function createUser(req , res){
+
+    const { name , email , password , role , departmentId } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await prisma.user.create({
+        data : {
+            name ,
+            email , 
+            role , 
+            password : hashedPassword , 
+            departmentId, 
+        },
+    });
+
+    res.status(201).json({ id : user.id ,
+        name : user.name , email : user.email ,
+        role : user.role }); 
+    
+}
+
+
+async function toggleUserActive(req , res){
+        const { id } = req.params ; 
+
+        const existing = await prisma.user.findUnique({
+            where :{id}
+        }); 
+
+
+        if (!existing){
+            return res.status(404).json({
+                message : 'utiliser introuvable',
+            });
+        }
+
+
+        const updated = await prisma.user.update({
+            where :{id},
+            data: { isActive : !existing.isActive }, 
+        }); 
+
+        res.json({ id : updated.id , isActive : updated.isActive});
+
+}
+
+
+module.exports = { getUsers , createUser , toggleUserActive };
