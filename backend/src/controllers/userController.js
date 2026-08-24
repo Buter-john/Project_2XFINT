@@ -63,4 +63,21 @@ async function toggleUserActive(req , res){
 }
 
 
-module.exports = { getUsers , createUser , toggleUserActive };
+async function updateUser(req , res){
+    const { id } = req.params;
+    const { name , role , departmentId , managerId} = req.body;
+
+    const updated = await prisma.user.update({
+        where :{ id },
+        data :{
+            name,
+            role,
+            departmentId,
+            managerId, 
+        }
+    })
+
+    res.json({ id : updated.id , name: updated.name , email : updated.email , role : updated.role , managerId : updated.managerId})
+}
+
+module.exports = { getUsers , createUser , toggleUserActive , updateUser };
