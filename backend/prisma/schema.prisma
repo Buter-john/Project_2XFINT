@@ -58,6 +58,7 @@ enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
+  CANCELLED
 }
 
 model LeaveRequest {

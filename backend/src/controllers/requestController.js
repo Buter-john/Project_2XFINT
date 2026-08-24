@@ -120,11 +120,12 @@ async function cancelRequest(req, res) {
         });
     }
 
-    await prisma.leaveRequest.delete({
-        where: { id },
+    await prisma.leaveRequest.update({
+        where :{ id },
+        data :{ status : 'CANCELLED'}
     });
 
-    res.status(204).send();
+    res.json({ message : 'Demande annulée'})
 
 }
 
@@ -146,4 +147,25 @@ async function getCalendarRequests(req, res) {
     res.json(requests);
 }
 
-module.exports = { createRequest, getMyRequests, updateRequest, cancelRequest, getPendingRequest, getCalendarRequests };
+
+async function getRequestById(req , res){
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    const request = await prisma.leaveRequest.findUnique({
+        where :{id},
+        include :{
+            validations:{
+                include :{validator :{select :{name : true}}}
+            },
+        },
+    });
+
+    if (!request || request.userId !== userId){
+        return res.status(404).json({ message : 'Demande introuvables'});
+    }
+
+    res.json(request);
+}
+
+module.exports = { createRequest, getMyRequests, updateRequest, cancelRequest, getPendingRequest, getCalendarRequests , getRequestById };
