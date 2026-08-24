@@ -1,6 +1,8 @@
 # Project_2XFINT — Portail de Gestion des Congés
 
-Reconstruction pédagogique du portail de gestion de congés SUP Herman : une application full-stack avec un backend Node/Express/Prisma/MySQL et un frontend React/TypeScript (à venir).
+Reconstruction pédagogique du portail de gestion de congés SUP Herman : une application full-stack avec un backend Node/Express/Prisma/MySQL et un frontend React/TypeScript.
+
+Fonctionnalités : authentification JWT avec 3 rôles (EMPLOYE, MANAGER, RH), CRUD des demandes de congés, calcul automatique des jours ouvrés, validation/rejet par le RH avec notifications, calendrier global des absences, gestion des comptes utilisateurs (création, désactivation logique), tests automatisés, documentation Swagger.
 
 ## Structure
 
@@ -138,6 +140,28 @@ curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/reject \
 ```
 
 Chaque decision cree une notification pour le collaborateur concerne.
+
+## Documentation Swagger
+
+Une fois le backend démarré, la documentation interactive de l'API est disponible sur :
+```
+http://localhost:5002/api-docs
+```
+
+## Tests automatisés
+
+```bash
+cd backend
+npm test
+```
+
+## Console admin (RH)
+
+Accessible sur `/admin` (frontend) avec le compte RH : créer un utilisateur, lister les comptes, activer/désactiver (un compte désactivé ne peut plus se connecter).
+
+## Calendrier
+
+Accessible sur `/calendar` (tous les rôles) : affiche les absences approuvées du mois en cours.
 
 ## Notes
 

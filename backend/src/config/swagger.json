@@ -1,0 +1,52 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SUP Herman API",
+    "version": "1.0.0",
+    "description": "API de gestion des congés"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Vérifie que l'API fonctionne",
+        "responses": {
+          "200": {
+            "description": "L'API est en ligne",
+            "content": {
+              "application/json": {
+                "example": { "status": "ok" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Connexion d'un utilisateur",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": { "email": "sylvie@gmail.com", "password": "password123" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Connexion réussie, renvoie un token JWT" },
+          "401": { "description": "Email ou mot de passe incorrect" },
+          "403": { "description": "Compte désactivé" }
+        }
+      }
+    },
+    "/api/requests": {
+      "get": {
+        "summary": "Liste mes demandes de congés",
+        "responses": { "200": { "description": "Liste des demandes de l'utilisateur connecté" } }
+      },
+      "post": {
+        "summary": "Créer une demande de congé",
+        "responses": { "201": { "description": "Demande créée" } }
+      }
+    }
+  }
+}
