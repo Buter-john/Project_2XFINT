@@ -18,7 +18,7 @@ npm install
 npm run dev
 ```
 
-L'interface tourne sur `http://localhost:5174` (Vite choisit un port libre si 5173 est déjà pris). La page `/login` permet de se connecter avec le compte de test ci-dessous.
+L'interface tourne sur `http://localhost:5173`. La page `/login` permet de se connecter avec le compte de test ci-dessous.
 
 ## Prérequis
 
