@@ -51,30 +51,32 @@ async function getMyRequests(req, res) {
 }
 
 
-async function getPendingRequest(req, res) {
+async function getPendingRequest(req , res){
+    const {role , userId} = req.user ;
+    const { status , type , employeeId , from , to } = req.query;
 
-    const { role, userId } = req.user;
 
-    const where = { status: 'PENDING' };
+    const where = {};
 
-    if (role === 'MANAGER') {
-
-        where.user = { managerId: userId };
-
+    if (role === 'MANAGER'){
+        where.user = { managerId : userId}
+    }
+    if (status) where.status = status;
+    if (type) where.type = type;
+    if (employeeId) where.userId = employeeId;
+    if (from || to) {
+        where.startDate = {};
+        if (from) where.startDate.gte = new Date(from);
+        if (to) where.startDate.lte = new Date(to);
     }
 
-    const request = await prisma.leaveRequest.findMany({
+    const requests = await prisma.leaveRequest.findMany({
         where,
-        include: {
-            user: {
-                select: { name: true, email: true }
-            }
-        },
-
-        orderBy: { createdAt: 'asc' },
+        include: { user: { select: { name: true, email: true } } },
+        orderBy: { createdAt: 'desc' },
     });
 
-    res.json(request);
+  res.json(requests);
 }
 
 

@@ -131,8 +131,8 @@ Sur le frontend (`/dashboard`), cliquer sur une demande ouvre une fenetre de det
 Routes reservees aux roles `MANAGER` et `RH` :
 
 ```bash
-# Voir les demandes en attente
-curl http://localhost:5002/api/requests/pending -H "Authorization: Bearer TOKEN_RH"
+# Voir toutes les demandes (filtres optionnels : status, type, employeeId, from, to)
+curl "http://localhost:5002/api/requests/pending?status=APPROVED&type=CP" -H "Authorization: Bearer TOKEN_RH"
 
 # Approuver
 curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/approve -H "Authorization: Bearer TOKEN_RH"

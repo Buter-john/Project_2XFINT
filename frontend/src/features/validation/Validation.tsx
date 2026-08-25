@@ -1,65 +1,96 @@
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import apiFetch from "../../utils/api";
+import { useParams } from "react-router-dom";
 
 interface LeaveRequest {
 
-    id : string;
-    type : string;
-    startDate : string;
-    endDate : string;
-    workingDays : string; 
-    comment : string | null;
-    user: { name : string ; email : string };
+  id: string;
+  type: string;
+  startDate: string;
+  endDate: string;
+  workingDays: string;
+  status: string;
+  comment: string | null;
+  user: { name: string; email: string };
 }
 
 
-function validation (){
+function validation() {
 
-    const [ requests , setRequests ] = useState <LeaveRequest[]>([]);
-    const [ loading , setLoading ] = useState(true);
+  const [requests, setRequests] = useState<LeaveRequest[]>([]);
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [type, setType] = useState('');
 
 
-    function loadingPending(){
-        apiFetch('/requests/pending')
-        .then((data) => setRequests(data))
-        .finally(() => setLoading(false));
-    }
+  function loadingPending() {
 
-    useEffect(() => {
-        loadingPending();
-    }, []);
+    const params = new URLSearchParams();
+    if (status) params.set('status', status);
+    if (type) params.set('type', type);
 
-    async function handleApprove (id:string){
+    apiFetch(`/requests/pending?${params.toString()}`)
+      .then((data) => setRequests(data))
+      .finally(() => setLoading(false));
+  }
 
-        await apiFetch(`/validation/${id}/approve`, {method : 'POST'});
-        loadingPending();
-    }
+  useEffect(() => {
+    loadingPending();
+  }, [status, type]);
 
-    async function handleReject(id:string){
-        const comment = window.prompt('Motif du refus ?') || '';
+  async function handleApprove(id: string) {
 
-        await apiFetch(`/validation/${id}/reject`, {
-            method: 'POST',
-            body : JSON.stringify({ comment }), 
-        });
-        loadingPending();
-    }
-    
-    if (loading) return <p>Chargement...</p>;
+    await apiFetch(`/validation/${id}/approve`, { method: 'POST' });
+    loadingPending();
+  }
+
+  async function handleReject(id: string) {
+    const comment = window.prompt('Motif du refus ?') || '';
+
+    await apiFetch(`/validation/${id}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ comment }),
+    });
+    loadingPending();
+  }
+
+  if (loading) return <p>Chargement...</p>;
 
   return (
     <div>
-      <h1>Demandes en attente de validation</h1>
-      {requests.length === 0 && <p>Aucune demande en attente.</p>}
+      <h1>Gestion des demandes</h1>
+
+      <select value={status} onChange={(e) => setStatus(e.target.value)}>
+        <option value="">Tous les statuts</option>
+        <option value="PENDING">En attente</option>
+        <option value="APPROVED">Approuvée</option>
+        <option value="REJECTED">Rejetée</option>
+        <option value="CANCELLED">Annulée</option>
+      </select>
+
+      <select value={type} onChange={(e) => setType(e.target.value)}>
+        <option value="">Tous les types</option>
+        <option value="CP">CP</option>
+        <option value="RTT">RTT</option>
+        <option value="SANS_SOLDES">Sans solde</option>
+        <option value="MALADIE">Maladie</option>
+        <option value="FORMATION">Formation</option>
+      </select>
+
+      {requests.length === 0 && <p>Aucune demande.</p>}
       <ul>
         {requests.map((req) => (
           <li key={req.id}>
             {req.user.name} — {req.type} — du {req.startDate.slice(0, 10)} au {req.endDate.slice(0, 10)}
-            {' '}({req.workingDays} jours){req.comment ? ` — "${req.comment}"` : ''}
-            {' '}
-            <button onClick={() => handleApprove(req.id)}>Approuver</button>
-            {' '}
-            <button onClick={() => handleReject(req.id)}>Rejeter</button>
+            {' '}({req.workingDays} jours) — statut : {req.status}
+            {req.status === 'PENDING' && (
+              <>
+                {' '}
+                <button onClick={() => handleApprove(req.id)}>Approuver</button>
+                {' '}
+                <button onClick={() => handleReject(req.id)}>Rejeter</button>
+              </>
+            )}
           </li>
         ))}
       </ul>
