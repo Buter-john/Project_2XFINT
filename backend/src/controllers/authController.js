@@ -40,6 +40,8 @@ async function login ( req , res ) {
             name: user.name,
             email: user.email,
             role: user.role,
+            cpBalance: user.cpBalance,
+            rttBalance: user.rttBalance,
         },
     });
 
@@ -57,6 +59,8 @@ async function getMe(req, res) {
         name: user.name,
         email: user.email,
         role: user.role,
+        cpBalance: user.cpBalance,
+        rttBalance: user.rttBalance
     });
 }
 

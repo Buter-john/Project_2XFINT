@@ -8,6 +8,8 @@ interface User {
     name: string;
     email: string;
     role: string;
+    cpBalance: string;
+    rttBalance: string;
 }
 
 interface AuthContextType {

@@ -44,6 +44,8 @@ model User {
   managerId    String?
   manager      User?   @relation("ManagerEmployees", fields: [managerId], references: [id])
   employees    User[]  @relation("ManagerEmployees")
+  cpBalance    Decimal  @default(30.0) @db.Decimal(5, 1)
+  rttBalance   Decimal  @default(10.0) @db.Decimal(5, 1)
 }
 
 enum LeaveType {

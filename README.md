@@ -117,9 +117,14 @@ curl -X PUT http://localhost:5002/api/requests/ID_DEMANDE \
   -H "Authorization: Bearer TON_TOKEN" \
   -d '{"type":"RTT","startDate":"2026-08-17","endDate":"2026-08-18","comment":"modifie"}'
 
-# Annuler une demande en attente
+# Annuler une demande en attente (passe le statut a CANCELLED, ne supprime rien)
 curl -X DELETE http://localhost:5002/api/requests/ID_DEMANDE -H "Authorization: Bearer TON_TOKEN"
+
+# Detail d'une demande (avec l'historique de validation / commentaire du manager)
+curl http://localhost:5002/api/requests/ID_DEMANDE -H "Authorization: Bearer TON_TOKEN"
 ```
+
+Sur le frontend (`/dashboard`), cliquer sur une demande ouvre une fenetre de detail avec le commentaire du manager en cas de rejet.
 
 ## Validation des demandes (RH/Manager)
 
@@ -139,7 +144,7 @@ curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/reject \
   -d '{"comment":"motif du refus"}'
 ```
 
-Chaque decision cree une notification pour le collaborateur concerne.
+Chaque decision cree une notification pour le collaborateur concerne. Un `MANAGER` ne voit que les demandes des utilisateurs dont il est le manager (`managerId`) ; le `RH` voit tout.
 
 ## Documentation Swagger
 

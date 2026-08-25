@@ -15,6 +15,18 @@ async function approveRequest ( req , res ){
             message : 'Demande introuvable ou Déjà traité',
         }); 
     }
+
+    if (request.type === 'CP'){
+        await prisma.user.update({
+            where : {id : request.userId},
+            data : {cpBalance :{decrement : request.workingDays}},
+        });   
+    } else if ( request.type === 'RTT'){
+        await prisma.user.update({
+            where : { id : request.userId},
+            data : { rttBalance : { decrement :request.workingDays}},
+        });
+    }
     
     await prisma.leaveRequest.update({
         where : {id},
