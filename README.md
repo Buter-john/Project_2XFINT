@@ -102,7 +102,7 @@ La réponse contient un token JWT (valable 8h), à passer ensuite dans l'en-têt
 Toutes les routes ci-dessous nécessitent l'en-tête `Authorization: Bearer <token>`.
 
 ```bash
-# Créer une demande
+# Créer une demande (rejetee si date de fin avant debut, ou si chevauche une demande existante en attente/approuvee)
 curl -X POST http://localhost:5002/api/requests \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer TON_TOKEN" \

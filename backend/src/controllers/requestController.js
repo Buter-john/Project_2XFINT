@@ -5,6 +5,23 @@ async function createRequest(req, res) {
     const { type, startDate, endDate, comment } = req.body;
     const userId = req.user.userId;
 
+    if ((new Date(endDate)) < new Date(startDate)){
+        return res.status(400).json({ message : 'La date de fin doit être après la date de début' })
+    }
+
+    const overlapping = await prisma.leaveRequest.findFirst({
+        where : {
+            userId,
+            status: { in: ['PENDING', 'APPROVED'] },
+            startDate: { lte: new Date(endDate) },
+            endDate: { gte: new Date(startDate) },
+        },
+    });
+
+    if (overlapping){
+        return res.status(400).json({ message : 'cette periode chevauche une demande existante'});
+    }
+
     const workingDays = calculateWorkingDays(startDate, endDate);
 
     const request = await prisma.leaveRequest.create({
