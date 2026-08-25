@@ -58,6 +58,12 @@ async function approveRequest ( req , res ){
             where :{id},
         });
 
+        if (!comment){
+            return res.status(400).json({
+                message : 'le motif du refus est obligatoire '
+            });
+        }
+
         if (!request || request.status !== 'PENDING'){
             return res.status(404).json({
                 message :'Demande introuvable ou Déjà traitée'
@@ -85,4 +91,33 @@ async function approveRequest ( req , res ){
         res.json({ message : ' demande reject '})
       }
 
-module.exports = { approveRequest , rejectRequest } ; 
+      async function correctStatus(req , res){
+
+        const { id } = req.params;
+        const { status , comment } = req.body; 
+        const validatorId = req.user.userId;
+
+        const request = await prisma.leaveRequest.findUnique ({
+            where : {id}
+        });
+
+        if (!request){
+            return res.status(404).json({message : 'Demande introuvable'});
+        }
+
+        await prisma.leaveRequest.update({
+            where :{ id },
+            data : { status }
+        });
+
+        await prisma.validationHistory.create({
+            data : {
+                requestId : id , validatorId,
+                action : status == 'APPROVED' ? 'APPROVE' : 'REJECT',
+                comment : comment || 'Correction RH',
+            },
+        });
+        res.json({message : 'Status corrigé'});
+      }
+
+module.exports = { approveRequest , rejectRequest , correctStatus } ; 

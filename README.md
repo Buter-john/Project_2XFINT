@@ -137,11 +137,17 @@ curl http://localhost:5002/api/requests/pending -H "Authorization: Bearer TOKEN_
 # Approuver
 curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/approve -H "Authorization: Bearer TOKEN_RH"
 
-# Rejeter (avec motif)
+# Rejeter (le motif "comment" est obligatoire)
 curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/reject \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer TOKEN_RH" \
   -d '{"comment":"motif du refus"}'
+
+# RH uniquement : corriger le statut de n'importe quelle demande, meme deja traitee
+curl -X PATCH http://localhost:5002/api/validation/ID_DEMANDE/correct \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN_RH" \
+  -d '{"status":"REJECTED","comment":"correction erreur de saisie"}'
 ```
 
 Chaque decision cree une notification pour le collaborateur concerne. Un `MANAGER` ne voit que les demandes des utilisateurs dont il est le manager (`managerId`) ; le `RH` voit tout.
