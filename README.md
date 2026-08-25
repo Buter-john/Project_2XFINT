@@ -164,6 +164,17 @@ curl -X PATCH http://localhost:5002/api/notifications/ID/read -H "Authorization:
 
 Sur le frontend, la cloche dans le header (visible une fois connecte) affiche le nombre de notifications non lues.
 
+## Profil utilisateur
+
+Accessible sur `/profile` (tous les roles) : infos personnelles, solde de conges, changement de mot de passe.
+
+```bash
+curl -X PATCH http://localhost:5002/api/auth/change-password \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TON_TOKEN" \
+  -d '{"currentPassword":"ancien","newPassword":"nouveau"}'
+```
+
 ## Documentation Swagger
 
 Une fois le backend démarré, la documentation interactive de l'API est disponible sur :

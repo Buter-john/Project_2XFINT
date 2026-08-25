@@ -39,6 +39,7 @@ function Header() {
             <nav>
                 <Link to="/dashboard">Dashboard</Link>{' '}
                 <Link to="/calendar">Calendrier</Link>{' '}
+                <Link to="/profile">Profil</Link>{' '}
                 {(user.role === 'MANAGER' || user.role === 'RH') && <Link to="/validation">Validation</Link>}{' '}
                 {user.role === 'RH' && <Link to="/admin">Admin</Link>}{' '}
                 <button onClick={logout}>Déconnexion</button>

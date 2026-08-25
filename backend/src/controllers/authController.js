@@ -64,4 +64,33 @@ async function getMe(req, res) {
     });
 }
 
-module.exports = { login, getMe } ;
+async function changePassword(req , res) {
+
+    const userId = req.user.userId ;
+
+    const { currentPassword , newPassword } = req.body;
+
+    const user = await prisma.user.findUnique({
+        where : {id :userId}
+    });
+
+    const matches = await bcrypt.compare(currentPassword, user.password);
+    
+    if (!matches){
+        return res.status(404).json({
+            message : 'Mot de passe actuel incorrect'
+        });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+        where : {id : userId},
+        data : { password : hashed },
+    });
+
+    res.json({message : 'Mot de passe modifié'});
+    
+}
+
+module.exports = { login, getMe , changePassword } ;
