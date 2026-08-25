@@ -1,13 +1,20 @@
 import { useState, type SubmitEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Navigate} from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+
 function Login() {
+  const { user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
+
+
+  if (user){
+    return <Navigate to="/dashboard"/>
+  }
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();

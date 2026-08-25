@@ -6,7 +6,8 @@ const validattionRoutes = require ('./routes/validationRoutes');
 const userRoutes = require('./routes/userRoutes')
 const cors = require('cors'); 
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./config/swagger.json')
+const swaggerDocument = require('./config/swagger.json');
+const notificationRoutes = require('./routes/notificationRoutes')
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/api/auth',authRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/validation', validattionRoutes);
 app.use('/api/users',userRoutes);
+app.use('/api/notifications',notificationRoutes)
 app.use('/api-docs', swaggerUi.serve , swaggerUi.setup(swaggerDocument));
 
 

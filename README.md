@@ -146,6 +146,18 @@ curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/reject \
 
 Chaque decision cree une notification pour le collaborateur concerne. Un `MANAGER` ne voit que les demandes des utilisateurs dont il est le manager (`managerId`) ; le `RH` voit tout.
 
+## Notifications
+
+```bash
+# Mes notifications
+curl http://localhost:5002/api/notifications -H "Authorization: Bearer TON_TOKEN"
+
+# Marquer comme lue
+curl -X PATCH http://localhost:5002/api/notifications/ID/read -H "Authorization: Bearer TON_TOKEN"
+```
+
+Sur le frontend, la cloche dans le header (visible une fois connecte) affiche le nombre de notifications non lues.
+
 ## Documentation Swagger
 
 Une fois le backend démarré, la documentation interactive de l'API est disponible sur :
