@@ -21,6 +21,11 @@ function validation() {
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState('');
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('desc');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
 
   function loadingPending() {
@@ -28,15 +33,27 @@ function validation() {
     const params = new URLSearchParams();
     if (status) params.set('status', status);
     if (type) params.set('type', type);
+    if (search) params.set('search', search);
+    params.set('sortBy', sortBy);
+    params.set('sortOrder', sortOrder);
+    params.set('page', String(page));
+    params.set('limit', '5');
 
     apiFetch(`/requests/pending?${params.toString()}`)
-      .then((data) => setRequests(data))
+      .then((data) => {
+        setRequests(data.requests);
+        setTotalPages(data.totalPages);
+      })
       .finally(() => setLoading(false));
   }
 
   useEffect(() => {
     loadingPending();
-  }, [status, type]);
+  }, [status, type, search, sortBy, sortOrder, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [status, type, search, sortBy, sortOrder]);
 
   async function handleApprove(id: string) {
 
@@ -77,6 +94,22 @@ function validation() {
         <option value="FORMATION">Formation</option>
       </select>
 
+      <input
+        placeholder="Rechercher un employé"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        <option value="createdAt">Trier par date de création</option>
+        <option value="startDate">Trier par date de début</option>
+      </select>
+
+      <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+        <option value="desc">Décroissant</option>
+        <option value="asc">Croissant</option>
+      </select>
+
       {requests.length === 0 && <p>Aucune demande.</p>}
       <ul>
         {requests.map((req) => (
@@ -94,6 +127,10 @@ function validation() {
           </li>
         ))}
       </ul>
+
+      <button disabled={page <= 1} onClick={() => setPage(page - 1)}>Précédent</button>
+      {' '}Page {page} / {totalPages}{' '}
+      <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Suivant</button>
     </div>
   );
 

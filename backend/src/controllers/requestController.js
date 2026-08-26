@@ -64,31 +64,42 @@ async function getMyRequests(req, res) {
 
 
 async function getPendingRequest(req, res) {
-    const { role, userId } = req.user;
-    const { status, type, employeeId, from, to } = req.query;
+  const { role, userId } = req.user;
+  const {
+    status, type, employeeId, from, to, search,
+    page = '1', limit = '10', sortBy = 'createdAt', sortOrder = 'desc',
+  } = req.query;
 
+  const where = {};
 
-    const where = {};
+  if (role === 'MANAGER') where.user = { managerId: userId };
+  if (status) where.status = status;
+  if (type) where.type = type;
+  if (employeeId) where.userId = employeeId;
+  if (from || to) {
+    where.startDate = {};
+    if (from) where.startDate.gte = new Date(from);
+    if (to) where.startDate.lte = new Date(to);
+  }
+  if (search) {
+    where.user = { ...where.user, name: { contains: search } };
+  }
 
-    if (role === 'MANAGER') {
-        where.user = { managerId: userId }
-    }
-    if (status) where.status = status;
-    if (type) where.type = type;
-    if (employeeId) where.userId = employeeId;
-    if (from || to) {
-        where.startDate = {};
-        if (from) where.startDate.gte = new Date(from);
-        if (to) where.startDate.lte = new Date(to);
-    }
+  const pageNum = Number(page);
+  const limitNum = Number(limit);
 
-    const requests = await prisma.leaveRequest.findMany({
-        where,
-        include: { user: { select: { name: true, email: true } } },
-        orderBy: { createdAt: 'desc' },
-    });
+  const [requests, total] = await Promise.all([
+    prisma.leaveRequest.findMany({
+      where,
+      include: { user: { select: { name: true, email: true } } },
+      orderBy: { [sortBy]: sortOrder },
+      skip: (pageNum - 1) * limitNum,
+      take: limitNum,
+    }),
+    prisma.leaveRequest.count({ where }),
+  ]);
 
-    res.json(requests);
+  res.json({ requests, total, page: pageNum, totalPages: Math.ceil(total / limitNum) });
 }
 
 
