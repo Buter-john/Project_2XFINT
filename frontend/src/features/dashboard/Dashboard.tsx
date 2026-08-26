@@ -54,6 +54,11 @@ function Dashboard() {
     async function handleSubmit(e: SubmitEvent) {
         e.preventDefault();
 
+        if (new Date(endDate) < new Date(startDate)) {
+            alert('La date de fin doit être après la date de début');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('type', type);
         formData.append('startDate', startDate);
@@ -63,7 +68,7 @@ function Dashboard() {
 
         await apiFetch('/requests', {
             method: 'POST',
-            body: formData ,
+            body: formData,
         });
 
         setStartDate('');

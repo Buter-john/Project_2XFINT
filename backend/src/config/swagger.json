@@ -5,24 +5,31 @@
     "version": "1.0.0",
     "description": "API de gestion des congés"
   },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
   "paths": {
     "/api/health": {
       "get": {
+        "tags": ["Système"],
         "summary": "Vérifie que l'API fonctionne",
         "responses": {
           "200": {
             "description": "L'API est en ligne",
-            "content": {
-              "application/json": {
-                "example": { "status": "ok" }
-              }
-            }
+            "content": { "application/json": { "example": { "status": "ok" } } }
           }
         }
       }
     },
     "/api/auth/login": {
       "post": {
+        "tags": ["Authentification"],
         "summary": "Connexion d'un utilisateur",
         "requestBody": {
           "content": {
@@ -32,20 +39,195 @@
           }
         },
         "responses": {
-          "200": { "description": "Connexion réussie, renvoie un token JWT" },
+          "200": { "description": "Connexion réussie, renvoie un token JWT et le profil utilisateur" },
           "401": { "description": "Email ou mot de passe incorrect" },
           "403": { "description": "Compte désactivé" }
         }
       }
     },
+    "/api/auth/me": {
+      "get": {
+        "tags": ["Authentification"],
+        "summary": "Profil de l'utilisateur connecté",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Profil (nom, email, rôle, soldes, mustChangePassword)" },
+          "401": { "description": "Non authentifié" }
+        }
+      }
+    },
+    "/api/auth/change-password": {
+      "patch": {
+        "tags": ["Authentification"],
+        "summary": "Changer son propre mot de passe",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": { "currentPassword": "ancien", "newPassword": "nouveau" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Mot de passe modifié" },
+          "401": { "description": "Mot de passe actuel incorrect" }
+        }
+      }
+    },
     "/api/requests": {
       "get": {
+        "tags": ["Demandes de congés"],
         "summary": "Liste mes demandes de congés",
+        "security": [{ "bearerAuth": [] }],
         "responses": { "200": { "description": "Liste des demandes de l'utilisateur connecté" } }
       },
       "post": {
-        "summary": "Créer une demande de congé",
-        "responses": { "201": { "description": "Demande créée" } }
+        "tags": ["Demandes de congés"],
+        "summary": "Créer une demande de congé (multipart/form-data, justificatif optionnel)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": { "description": "Demande créée" },
+          "400": { "description": "Dates incohérentes ou chevauchement avec une demande existante" }
+        }
+      }
+    },
+    "/api/requests/{id}": {
+      "get": {
+        "tags": ["Demandes de congés"],
+        "summary": "Détail d'une demande (avec historique de validation)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Détail de la demande" }, "404": { "description": "Introuvable" } }
+      },
+      "put": {
+        "tags": ["Demandes de congés"],
+        "summary": "Modifier une demande en attente",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Demande modifiée" } }
+      },
+      "delete": {
+        "tags": ["Demandes de congés"],
+        "summary": "Annuler une demande en attente (statut ANNULEE, pas de suppression)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Demande annulée" } }
+      }
+    },
+    "/api/requests/pending": {
+      "get": {
+        "tags": ["Gestion des demandes (RH/Manager)"],
+        "summary": "Liste des demandes avec filtres, pagination, recherche et tri",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "status", "in": "query", "schema": { "type": "string" } },
+          { "name": "type", "in": "query", "schema": { "type": "string" } },
+          { "name": "employeeId", "in": "query", "schema": { "type": "string" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "{ requests, total, page, totalPages }. Le Manager ne voit que son équipe, le RH voit tout." } }
+      }
+    },
+    "/api/requests/calendar": {
+      "get": {
+        "tags": ["Calendrier"],
+        "summary": "Demandes approuvées pour le calendrier global (filtre departmentId optionnel)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Liste des demandes approuvées" } }
+      }
+    },
+    "/api/validation/{id}/approve": {
+      "post": {
+        "tags": ["Validation"],
+        "summary": "Approuver une demande (Manager/RH) — déduit le solde de congés",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Demande approuvée" }, "403": { "description": "Rôle non autorisé" } }
+      }
+    },
+    "/api/validation/{id}/reject": {
+      "post": {
+        "tags": ["Validation"],
+        "summary": "Rejeter une demande (Manager/RH) — motif obligatoire",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "content": { "application/json": { "example": { "comment": "motif du refus" } } } },
+        "responses": { "200": { "description": "Demande rejetée" }, "400": { "description": "Motif manquant" } }
+      }
+    },
+    "/api/validation/{id}/correct": {
+      "patch": {
+        "tags": ["Validation"],
+        "summary": "Corriger le statut d'une demande, même déjà traitée (RH uniquement)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Statut corrigé" }, "403": { "description": "RH uniquement" } }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": ["Utilisateurs (RH)"],
+        "summary": "Lister tous les utilisateurs",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Liste des utilisateurs" } }
+      },
+      "post": {
+        "tags": ["Utilisateurs (RH)"],
+        "summary": "Créer un utilisateur (mustChangePassword sera vrai)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "201": { "description": "Utilisateur créé" } }
+      }
+    },
+    "/api/users/{id}": {
+      "put": {
+        "tags": ["Utilisateurs (RH)"],
+        "summary": "Modifier un utilisateur (nom, rôle, département, manager)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Utilisateur modifié" } }
+      }
+    },
+    "/api/users/{id}/toggle-active": {
+      "patch": {
+        "tags": ["Utilisateurs (RH)"],
+        "summary": "Activer/désactiver un compte",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Statut isActive basculé" } }
+      }
+    },
+    "/api/users/{id}/reset-password": {
+      "post": {
+        "tags": ["Utilisateurs (RH)"],
+        "summary": "Réinitialiser le mot de passe (renvoie un mot de passe temporaire)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Mot de passe réinitialisé, mustChangePassword remis à vrai" } }
+      }
+    },
+    "/api/departments": {
+      "get": {
+        "tags": ["Départements"],
+        "summary": "Lister les départements (tous les rôles)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Liste des départements" } }
+      },
+      "post": {
+        "tags": ["Départements"],
+        "summary": "Créer un département (RH uniquement)",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "201": { "description": "Département créé" }, "403": { "description": "RH uniquement" } }
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "tags": ["Notifications"],
+        "summary": "Mes notifications",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Liste des notifications" } }
+      }
+    },
+    "/api/notifications/{id}/read": {
+      "patch": {
+        "tags": ["Notifications"],
+        "summary": "Marquer une notification comme lue",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Notification marquée lue" } }
       }
     }
   }

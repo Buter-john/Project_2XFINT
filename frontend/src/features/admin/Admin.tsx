@@ -60,6 +60,12 @@ function Admin() {
 
   async function handleCreate(e: SubmitEvent) {
     e.preventDefault();
+
+    if (password.length < 6) {
+      alert('Le mot de passe doit contenir au moins 6 caractères');
+      return;
+    }
+
     await apiFetch('/users', {
       method: 'POST',
       body: JSON.stringify({ name, email, password, role, departmentId: Number(departmentId) }),
@@ -111,7 +117,7 @@ function Admin() {
         <input placeholder="Nom du département" value={newDeptName} onChange={(e) => setNewDeptName(e.target.value)} required />
         <button type="submit">Ajouter le département</button>
       </form>
-     
+
 
       <ul>
         {users.map((u) => (
