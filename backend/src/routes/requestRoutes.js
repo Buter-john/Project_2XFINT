@@ -1,5 +1,5 @@
 const express = require('express');
-const { createRequest , getMyRequests , updateRequest , cancelRequest, getPendingRequest , getCalendarRequests , getRequestById} = require('../controllers/requestController');
+const { createRequest , getMyRequests , updateRequest , cancelRequest, getPendingRequest , getCalendarRequests , getRequestById , upload } = require('../controllers/requestController');
 const router = express.Router();
 const authMiddleware = require('../middlewares/authMiddleware');
 const requireRole = require ('../middlewares/requireRole')
@@ -8,7 +8,7 @@ router.use(authMiddleware);
 
 router.get ('/pending' , requireRole('MANAGER', 'RH') , getPendingRequest)
 
-router.post ('/', createRequest);
+router.post ('/', upload.single('document') ,createRequest);
 
 router.put ('/:id', updateRequest);
 

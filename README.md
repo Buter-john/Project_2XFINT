@@ -102,11 +102,11 @@ La réponse contient un token JWT (valable 8h), à passer ensuite dans l'en-têt
 Toutes les routes ci-dessous nécessitent l'en-tête `Authorization: Bearer <token>`.
 
 ```bash
-# Créer une demande (rejetee si date de fin avant debut, ou si chevauche une demande existante en attente/approuvee)
+# Créer une demande avec justificatif (multipart/form-data, pas de JSON)
 curl -X POST http://localhost:5002/api/requests \
-  -H "Content-Type: application/json" \
   -H "Authorization: Bearer TON_TOKEN" \
-  -d '{"type":"CP","startDate":"2026-08-10","endDate":"2026-08-14","comment":"vacances"}'
+  -F "type=CP" -F "startDate=2026-08-10" -F "endDate=2026-08-14" -F "comment=vacances" \
+  -F "document=@/chemin/vers/justificatif.pdf"
 
 # Lister mes demandes
 curl http://localhost:5002/api/requests -H "Authorization: Bearer TON_TOKEN"

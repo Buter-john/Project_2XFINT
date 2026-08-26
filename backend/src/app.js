@@ -27,6 +27,7 @@ app.use('/api/validation', validattionRoutes);
 app.use('/api/users',userRoutes);
 app.use('/api/notifications',notificationRoutes);
 app.use('/api/departments', departmentRoutes);
+app.use('/uploads', express.static('uploads'));
 app.use('/api-docs', swaggerUi.serve , swaggerUi.setup(swaggerDocument));
 
 

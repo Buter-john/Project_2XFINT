@@ -32,6 +32,7 @@ function Dashboard() {
     const [requests, setRequests] = useState<LeaveRequest[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedRequest, setSelectedRequest] = useState<RequestDetail | null>(null);
+    const [document, setDocument] = useState<File | null>(null);
 
     const [type, setType] = useState('CP');
     const [startDate, setStartDate] = useState('');
@@ -53,14 +54,22 @@ function Dashboard() {
     async function handleSubmit(e: SubmitEvent) {
         e.preventDefault();
 
+        const formData = new FormData();
+        formData.append('type', type);
+        formData.append('startDate', startDate);
+        formData.append('endDate', endDate);
+        formData.append('comment', comment);
+        if (document) formData.append('document', document);
+
         await apiFetch('/requests', {
             method: 'POST',
-            body: JSON.stringify({ type, startDate, endDate, comment }),
+            body: formData ,
         });
 
         setStartDate('');
         setEndDate('');
         setComment('');
+        setDocument(null)
         loadRequest();
     }
 
@@ -74,6 +83,8 @@ function Dashboard() {
         await apiFetch(`/requests/${id}`, { method: 'DELETE' });
         loadRequest();
     }
+
+
 
     if (loading) return <>Chargement...</>
 
@@ -92,6 +103,11 @@ function Dashboard() {
                 <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
                 <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
                 <input placeholder="Commentaire" value={comment} onChange={(e) => setComment(e.target.value)} />
+                <input
+                    type="file"
+                    onChange={(e) => setDocument(e.target.files ? e.target.files[0] : null)}
+                />
+
                 <button type="submit">Déposer la demande</button>
             </form>
 

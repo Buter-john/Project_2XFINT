@@ -1,5 +1,15 @@
 const prisma = require('../config/prisma');
 const { calculateWorkingDays } = require('../utils/dataUtils');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: 'uploads/',
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
 
 async function createRequest(req, res) {
     const { type, startDate, endDate, comment } = req.body;
@@ -32,6 +42,8 @@ async function createRequest(req, res) {
             endDate: new Date(endDate),
             workingDays,
             comment,
+            documentUrl: req.file ? `/uploads/${req.file.filename}` : null,
+
         },
     });
 
@@ -187,4 +199,4 @@ async function getRequestById(req , res){
     res.json(request);
 }
 
-module.exports = { createRequest, getMyRequests, updateRequest, cancelRequest, getPendingRequest, getCalendarRequests , getRequestById };
+module.exports = { createRequest, getMyRequests, updateRequest, cancelRequest, getPendingRequest, getCalendarRequests , getRequestById , upload };

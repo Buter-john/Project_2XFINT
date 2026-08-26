@@ -7,3 +7,7 @@ node_modules
 # Fichiers générés par des outils IA (Windsurf), pas liés au projet
 .windsurf/
 skills-lock.json
+
+# Fichiers uploades par les utilisateurs (justificatifs), pas du code source
+uploads/*
+!uploads/.gitkeep

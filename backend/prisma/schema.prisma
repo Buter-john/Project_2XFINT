@@ -78,6 +78,7 @@ model LeaveRequest {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   validations ValidationHistory[]
+  documentUrl String?
 
 }
 
