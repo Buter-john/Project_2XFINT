@@ -7,6 +7,7 @@ import Calendar from './features/calendar/Calendar';
 import Admin from './features/admin/Admin';
 import Header from './components/Header';
 import Profile from './features/profile/Profile';
+import SetPassword from './features/auth/SetPassword';
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/set-password" element={<ProtectedRoute><SetPassword /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/validation" element={<ProtectedRoute roles={['MANAGER', 'RH']}><Validation /> </ProtectedRoute>} />

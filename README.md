@@ -168,6 +168,8 @@ Sur le frontend, la cloche dans le header (visible une fois connecte) affiche le
 
 Tout nouveau compte cree par le RH a `mustChangePassword: true` : l'utilisateur est redirige de force vers `/profile` tant qu'il n'a pas change son mot de passe.
 
+Une page dediee `/set-password` (sans infos personnelles) force ce changement avant tout acces au reste de l'appli.
+
 Le RH peut reinitialiser le mot de passe d'un utilisateur (bouton sur `/admin`) :
 ```bash
 curl -X POST http://localhost:5002/api/users/ID_USER/reset-password -H "Authorization: Bearer TOKEN_RH"

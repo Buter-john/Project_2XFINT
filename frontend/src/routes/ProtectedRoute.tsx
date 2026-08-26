@@ -10,8 +10,8 @@ function ProtectedRoute({ children, roles }: { children: ReactNode; roles?: stri
     if (!user) return <Navigate to="/login" />;
     if (roles && !roles.includes(user.role)) return <Navigate to="/dashboard" />;
 
-    if (user.mustChangePassword && location.pathname !== '/profile') {
-        return <Navigate to="/profile" />;
+    if (user.mustChangePassword && location.pathname !== '/set-password') {
+        return <Navigate to="/set-password" />;
     }
 
     return <>{children}</>;

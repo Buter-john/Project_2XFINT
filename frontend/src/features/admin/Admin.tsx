@@ -111,11 +111,7 @@ function Admin() {
         <input placeholder="Nom du département" value={newDeptName} onChange={(e) => setNewDeptName(e.target.value)} required />
         <button type="submit">Ajouter le département</button>
       </form>
-      <ul>
-        {departments.map((d) => (
-          <li key={d.id}>{d.name}</li>
-        ))}
-      </ul>
+     
 
       <ul>
         {users.map((u) => (

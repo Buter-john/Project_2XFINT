@@ -89,7 +89,7 @@ async function resetPassword(req , res){
 
     await prisma.user.update({
         where : {id},
-        data :{ password : hashed , mustChangePassword : false },
+        data :{ password : hashed , mustChangePassword : true },
     });
 
     res.json({
