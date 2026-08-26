@@ -46,6 +46,7 @@ model User {
   employees    User[]  @relation("ManagerEmployees")
   cpBalance    Decimal  @default(30.0) @db.Decimal(5, 1)
   rttBalance   Decimal  @default(10.0) @db.Decimal(5, 1)
+  mustChangePassword Boolean @default(true)
 }
 
 enum LeaveType {

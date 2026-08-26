@@ -1,60 +1,66 @@
-import { useState , useEffect , type SubmitEvent } from "react";
+import { useState, useEffect, type SubmitEvent } from "react";
 import apiFetch from "../../utils/api";
 
 interface User {
 
-    id : string;
-    name : string;
-    email : string;
-    role : string;
-    isActive : boolean;
-    department : { name : string};
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  department: { name: string };
 
 }
 
-function Admin(){
+function Admin() {
 
-    const [users , setUsers] = useState<User[]>([]);
-    const [loading , setloading] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setloading] = useState(true);
 
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [role, setRole] = useState('EMPLOYE');
-    const [departmentId, setDepartmentId] = useState('1');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('EMPLOYE');
+  const [departmentId, setDepartmentId] = useState('1');
 
-    function loadUsers(){
-        apiFetch('/users')
-        .then((data) => setUsers(data))
-        .finally(() => setloading(false));
-    }
+  function loadUsers() {
+    apiFetch('/users')
+      .then((data) => setUsers(data))
+      .finally(() => setloading(false));
+  }
 
-    useEffect(() => {
-        loadUsers();
-    } , []);
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
-    async function handleCreate(e:SubmitEvent){
-        e.preventDefault();
-        await apiFetch('/users',{
-            method :'POST',
-            body : JSON.stringify({ name , email , password , role ,departmentId : Number(departmentId)}),
-        })
-        setName('');
-        setEmail('');
-        setPassword('');
-        loadUsers();
-    }
+  async function handleCreate(e: SubmitEvent) {
+    e.preventDefault();
+    await apiFetch('/users', {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password, role, departmentId: Number(departmentId) }),
+    })
+    setName('');
+    setEmail('');
+    setPassword('');
+    loadUsers();
+  }
 
-    async function handleToggle(id: string ){
-        await apiFetch(`/users/${id}/toggle-active` , {
-            method : 'PATCH',
-        });
-        loadUsers();
-    }
+  async function handleResetPassword(id: string) {
+    const data = await apiFetch(`/users/${id}/reset-password`, { method: 'POST' });
+    alert(`Nouveau mot de passe temporaire : ${data.tempPassword}`);
+    loadUsers();
+  }
 
-    if (loading) return <p>Chargement....</p>
+  async function handleToggle(id: string) {
+    await apiFetch(`/users/${id}/toggle-active`, {
+      method: 'PATCH',
+    });
+    loadUsers();
+  }
 
-    return (
+  if (loading) return <p>Chargement....</p>
+
+  return (
     <div>
       <h1>Gestion des utilisateurs</h1>
 
@@ -79,6 +85,7 @@ function Admin(){
             <button onClick={() => handleToggle(u.id)}>
               {u.isActive ? 'Désactiver' : 'Réactiver'}
             </button>
+            <button onClick={() => handleResetPassword(u.id)}>Réinitialiser mot de passe</button>
           </li>
         ))}
       </ul>
@@ -87,4 +94,4 @@ function Admin(){
 
 }
 
-export default Admin ; 
+export default Admin; 

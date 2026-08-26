@@ -42,6 +42,7 @@ async function login ( req , res ) {
             role: user.role,
             cpBalance: user.cpBalance,
             rttBalance: user.rttBalance,
+            mustChangePassword: user.mustChangePassword
         },
     });
 
@@ -60,7 +61,8 @@ async function getMe(req, res) {
         email: user.email,
         role: user.role,
         cpBalance: user.cpBalance,
-        rttBalance: user.rttBalance
+        rttBalance: user.rttBalance,
+        mustChangePassword: user.mustChangePassword
     });
 }
 
@@ -86,7 +88,7 @@ async function changePassword(req , res) {
 
     await prisma.user.update({
         where : {id : userId},
-        data : { password : hashed },
+        data : { password : hashed , mustChangePassword : false },
     });
 
     res.json({message : 'Mot de passe modifié'});

@@ -80,4 +80,22 @@ async function updateUser(req , res){
     res.json({ id : updated.id , name: updated.name , email : updated.email , role : updated.role , managerId : updated.managerId})
 }
 
-module.exports = { getUsers , createUser , toggleUserActive , updateUser };
+async function resetPassword(req , res){
+
+    const {id}= req.params;
+    const tempPassword = Math.random().toString(36).slice(-8);
+
+    const hashed = await bcrypt.hash(tempPassword, 10);
+
+    await prisma.user.update({
+        where : {id},
+        data :{ password : hashed , mustChangePassword : false },
+    });
+
+    res.json({
+        message : 'mot de passe réinitialisé' , tempPassword 
+    })
+
+}
+
+module.exports = { getUsers , createUser , toggleUserActive , updateUser , resetPassword };
