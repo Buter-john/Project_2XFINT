@@ -12,16 +12,23 @@ interface User {
 
 }
 
+interface Department {
+  id: number;
+  name: string;
+}
+
 function Admin() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setloading] = useState(true);
+  const [departments, setDepartments] = useState<Department[]>([]);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('EMPLOYE');
-  const [departmentId, setDepartmentId] = useState('1');
+  const [departmentId, setDepartmentId] = useState('');
+  const [newDeptName, setNewDeptName] = useState('');
 
   function loadUsers() {
     apiFetch('/users')
@@ -29,9 +36,27 @@ function Admin() {
       .finally(() => setloading(false));
   }
 
+  function loadDepartments() {
+    apiFetch('/departments').then((data) => {
+      setDepartments(data);
+      if (data.length > 0) setDepartmentId(String(data[0].id));
+    });
+  }
+
   useEffect(() => {
     loadUsers();
+    loadDepartments();
   }, []);
+
+  async function handleCreateDepartment(e: SubmitEvent) {
+    e.preventDefault();
+    await apiFetch('/departments', {
+      method: 'POST',
+      body: JSON.stringify({ name: newDeptName }),
+    });
+    setNewDeptName('');
+    loadDepartments();
+  }
 
   async function handleCreate(e: SubmitEvent) {
     e.preventDefault();
@@ -73,9 +98,24 @@ function Admin() {
           <option value="MANAGER">Manager</option>
           <option value="RH">RH</option>
         </select>
-        <input type="number" value={departmentId} onChange={(e) => setDepartmentId(e.target.value)} />
+        <select value={departmentId} onChange={(e) => setDepartmentId(e.target.value)}>
+          {departments.map((d) => (
+            <option key={d.id} value={d.id}>{d.name}</option>
+          ))}
+        </select>
         <button type="submit">Créer</button>
       </form>
+
+      <h2>Départements</h2>
+      <form onSubmit={handleCreateDepartment}>
+        <input placeholder="Nom du département" value={newDeptName} onChange={(e) => setNewDeptName(e.target.value)} required />
+        <button type="submit">Ajouter le département</button>
+      </form>
+      <ul>
+        {departments.map((d) => (
+          <li key={d.id}>{d.name}</li>
+        ))}
+      </ul>
 
       <ul>
         {users.map((u) => (
