@@ -3,10 +3,10 @@ const { calculateWorkingDays } = require('../utils/dataUtils');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
-  destination: 'uploads/',
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
+    destination: 'uploads/',
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    },
 });
 
 const upload = multer({ storage });
@@ -15,12 +15,12 @@ async function createRequest(req, res) {
     const { type, startDate, endDate, comment } = req.body;
     const userId = req.user.userId;
 
-    if ((new Date(endDate)) < new Date(startDate)){
-        return res.status(400).json({ message : 'La date de fin doit être après la date de début' })
+    if ((new Date(endDate)) < new Date(startDate)) {
+        return res.status(400).json({ message: 'La date de fin doit être après la date de début' })
     }
 
     const overlapping = await prisma.leaveRequest.findFirst({
-        where : {
+        where: {
             userId,
             status: { in: ['PENDING', 'APPROVED'] },
             startDate: { lte: new Date(endDate) },
@@ -28,8 +28,8 @@ async function createRequest(req, res) {
         },
     });
 
-    if (overlapping){
-        return res.status(400).json({ message : 'cette periode chevauche une demande existante'});
+    if (overlapping) {
+        return res.status(400).json({ message: 'cette periode chevauche une demande existante' });
     }
 
     const workingDays = calculateWorkingDays(startDate, endDate);
@@ -63,15 +63,15 @@ async function getMyRequests(req, res) {
 }
 
 
-async function getPendingRequest(req , res){
-    const {role , userId} = req.user ;
-    const { status , type , employeeId , from , to } = req.query;
+async function getPendingRequest(req, res) {
+    const { role, userId } = req.user;
+    const { status, type, employeeId, from, to } = req.query;
 
 
     const where = {};
 
-    if (role === 'MANAGER'){
-        where.user = { managerId : userId}
+    if (role === 'MANAGER') {
+        where.user = { managerId: userId }
     }
     if (status) where.status = status;
     if (type) where.type = type;
@@ -88,7 +88,7 @@ async function getPendingRequest(req , res){
         orderBy: { createdAt: 'desc' },
     });
 
-  res.json(requests);
+    res.json(requests);
 }
 
 
@@ -152,24 +152,27 @@ async function cancelRequest(req, res) {
     }
 
     await prisma.leaveRequest.update({
-        where :{ id },
-        data :{ status : 'CANCELLED'}
+        where: { id },
+        data: { status: 'CANCELLED' }
     });
 
-    res.json({ message : 'Demande annulée'})
+    res.json({ message: 'Demande annulée' })
 
 }
 
 async function getCalendarRequests(req, res) {
+    const { departmentId } = req.query;
+
+    const where = { status: 'APPROVED' };
+    if (departmentId) {
+        where.user = { departmentId: Number(departmentId) };
+    }
 
     const requests = await prisma.leaveRequest.findMany({
-        where: { status: 'APPROVED' },
+        where,
         include: {
             user: {
-                select: {
-                    name: true,
-                    department: { select: { name: true } },
-                },
+                select: { name: true, department: { select: { name: true } } },
             },
         },
         orderBy: { startDate: 'asc' },
@@ -179,24 +182,24 @@ async function getCalendarRequests(req, res) {
 }
 
 
-async function getRequestById(req , res){
+async function getRequestById(req, res) {
     const { id } = req.params;
     const userId = req.user.userId;
 
     const request = await prisma.leaveRequest.findUnique({
-        where :{id},
-        include :{
-            validations:{
-                include :{validator :{select :{name : true}}}
+        where: { id },
+        include: {
+            validations: {
+                include: { validator: { select: { name: true } } }
             },
         },
     });
 
-    if (!request || request.userId !== userId){
-        return res.status(404).json({ message : 'Demande introuvables'});
+    if (!request || request.userId !== userId) {
+        return res.status(404).json({ message: 'Demande introuvables' });
     }
 
     res.json(request);
 }
 
-module.exports = { createRequest, getMyRequests, updateRequest, cancelRequest, getPendingRequest, getCalendarRequests , getRequestById , upload };
+module.exports = { createRequest, getMyRequests, updateRequest, cancelRequest, getPendingRequest, getCalendarRequests, getRequestById, upload };

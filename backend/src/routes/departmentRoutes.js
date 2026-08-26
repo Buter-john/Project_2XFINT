@@ -5,9 +5,8 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const requireRole = require('../middlewares/requireRole');
 
 router.use(authMiddleware);
-router.use(requireRole('RH'));
 
 router.get('/', getDepartments);
-router.post('/', createDepartment);
+router.post('/', requireRole('RH'), createDepartment);
 
 module.exports = router;
