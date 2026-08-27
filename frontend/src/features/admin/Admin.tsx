@@ -89,48 +89,120 @@ function Admin() {
     loadUsers();
   }
 
-  if (loading) return <p>Chargement....</p>
+  if (loading) return <p className="p-8 text-gray-500">Chargement...</p>
 
   return (
-    <div>
-      <h1>Gestion des utilisateurs</h1>
+    <div className="min-h-screen bg-slate-50 p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Gestion des utilisateurs</h1>
 
-      <form onSubmit={handleCreate}>
-        <input placeholder="Nom" value={name} onChange={(e) => setName(e.target.value)} required />
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="EMPLOYE">Employé</option>
-          <option value="MANAGER">Manager</option>
-          <option value="RH">RH</option>
-        </select>
-        <select value={departmentId} onChange={(e) => setDepartmentId(e.target.value)}>
-          {departments.map((d) => (
-            <option key={d.id} value={d.id}>{d.name}</option>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <form onSubmit={handleCreate} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="font-semibold text-gray-900 mb-4">Nouvel utilisateur</h2>
+            <div className="space-y-3">
+              <input
+                placeholder="Nom"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <input
+                type="password"
+                placeholder="Mot de passe"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <option value="EMPLOYE">Employé</option>
+                <option value="MANAGER">Manager</option>
+                <option value="RH">RH</option>
+              </select>
+              <select
+                value={departmentId}
+                onChange={(e) => setDepartmentId(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                {departments.map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="w-full bg-emerald-600 text-white font-medium py-2 rounded-lg hover:bg-emerald-700"
+              >
+                Créer
+              </button>
+            </div>
+          </form>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="font-semibold text-gray-900 mb-4">Départements</h2>
+            <form onSubmit={handleCreateDepartment} className="flex gap-2 mb-4">
+              <input
+                placeholder="Nom du département"
+                value={newDeptName}
+                onChange={(e) => setNewDeptName(e.target.value)}
+                required
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <button
+                type="submit"
+                className="bg-gray-100 text-gray-700 px-3 rounded-lg text-sm hover:bg-gray-200"
+              >
+                Ajouter
+              </button>
+            </form>
+            <ul className="space-y-1">
+              {departments.map((d) => (
+                <li key={d.id} className="text-sm text-gray-600 px-2 py-1 rounded bg-gray-50">{d.name}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100">
+          {users.map((u) => (
+            <div key={u.id} className="flex items-center justify-between px-5 py-4">
+              <div>
+                <p className="font-medium text-gray-900">{u.name}</p>
+                <p className="text-sm text-gray-500">{u.email} · {u.department.name} · {u.role}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${u.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                  {u.isActive ? 'Actif' : 'Inactif'}
+                </span>
+                <button
+                  onClick={() => handleResetPassword(u.id)}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Réinitialiser mdp
+                </button>
+                <button
+                  onClick={() => handleToggle(u.id)}
+                  className="text-sm text-red-600 hover:underline"
+                >
+                  {u.isActive ? 'Désactiver' : 'Réactiver'}
+                </button>
+              </div>
+            </div>
           ))}
-        </select>
-        <button type="submit">Créer</button>
-      </form>
-
-      <h2>Départements</h2>
-      <form onSubmit={handleCreateDepartment}>
-        <input placeholder="Nom du département" value={newDeptName} onChange={(e) => setNewDeptName(e.target.value)} required />
-        <button type="submit">Ajouter le département</button>
-      </form>
-
-
-      <ul>
-        {users.map((u) => (
-          <li key={u.id}>
-            {u.name} — {u.email} — {u.role} — {u.department.name} — {u.isActive ? 'Actif' : 'Inactif'}
-            {' '}
-            <button onClick={() => handleToggle(u.id)}>
-              {u.isActive ? 'Désactiver' : 'Réactiver'}
-            </button>
-            <button onClick={() => handleResetPassword(u.id)}>Réinitialiser mot de passe</button>
-          </li>
-        ))}
-      </ul>
+        </div>
+      </div>
     </div>
   );
 
