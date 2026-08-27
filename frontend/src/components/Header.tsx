@@ -35,31 +35,45 @@ function Header() {
     const unreadCount = notifications.filter((n) => !n.isRead).length;
 
     return (
-        <header>
-            <nav>
-                <Link to="/dashboard">Dashboard</Link>{' '}
-                <Link to="/calendar">Calendrier</Link>{' '}
-                <Link to="/profile">Profil</Link>{' '}
-                {(user.role === 'MANAGER' || user.role === 'RH') && <Link to="/validation">Validation</Link>}{' '}
-                {user.role === 'RH' && <Link to="/admin">Admin</Link>}{' '}
-                <button onClick={logout}>Déconnexion</button>
+        <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+            <nav className="flex items-center gap-4 text-sm text-gray-700">
+                <Link to="/dashboard" className="hover:text-blue-600">Dashboard</Link>
+                <Link to="/calendar" className="hover:text-blue-600">Calendrier</Link>
+                <Link to="/profile" className="hover:text-blue-600">Profil</Link>
+                {(user.role === 'MANAGER' || user.role === 'RH') && (
+                    <Link to="/validation" className="hover:text-blue-600">Validation</Link>
+                )}
+                {user.role === 'RH' && <Link to="/admin" className="hover:text-blue-600">Admin</Link>}
+                <button onClick={logout} className="text-red-600 hover:text-red-700">Déconnexion</button>
             </nav>
 
-            <button onClick={() => setOpen(!open)}>
-                Notifications ({unreadCount})
-            </button>
+            <div className="relative">
+                <button
+                    onClick={() => setOpen(!open)}
+                    className="bg-gray-100 px-3 py-1.5 rounded-md text-sm hover:bg-gray-200"
+                >
+                    Notifications ({unreadCount})
+                </button>
 
-            {open && (
-                <ul>
-                    {notifications.length === 0 && <li>Aucune notification</li>}
-                    {notifications.map((n) => (
-                        <li key={n.id} style={{ fontWeight: n.isRead ? 'normal' : 'bold' }}>
-                            {n.title} — {n.message}
-                            {!n.isRead && <button onClick={() => handleMarkAsRead(n.id)}>Marquer lu</button>}
-                        </li>
-                    ))}
-                </ul>
-            )}
+                {open && (
+                    <ul className="absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-md shadow-lg p-2 text-sm">
+                        {notifications.length === 0 && <li className="text-gray-500 p-2">Aucune notification</li>}
+                        {notifications.map((n) => (
+                            <li key={n.id} className={`p-2 border-b border-gray-100 last:border-0 ${n.isRead ? 'text-gray-500' : 'font-bold text-gray-900'}`}>
+                                {n.title} — {n.message}
+                                {!n.isRead && (
+                                    <button
+                                        onClick={() => handleMarkAsRead(n.id)}
+                                        className="block text-blue-600 text-xs mt-1 font-normal hover:underline"
+                                    >
+                                        Marquer lu
+                                    </button>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
         </header>
     );
 }
