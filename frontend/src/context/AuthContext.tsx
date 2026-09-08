@@ -8,6 +8,7 @@ interface User {
     name: string;
     email: string;
     role: string;
+    department: { name: string };
     cpBalance: string;
     rttBalance: string;
     mustChangePassword: boolean;

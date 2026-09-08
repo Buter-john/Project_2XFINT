@@ -46,6 +46,10 @@ function Profile() {
             <span className="text-gray-500">Rôle</span>
             <span className="font-medium text-gray-900">{user?.role}</span>
           </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">Département</span>
+            <span className="font-medium text-gray-900">{user?.department?.name}</span>
+          </div>
           <div className="border-t border-gray-100 pt-3 flex gap-4">
             <div className="flex-1 bg-slate-50 rounded-lg px-4 py-3 text-center">
               <p className="text-xs text-gray-500">CP restants</p>

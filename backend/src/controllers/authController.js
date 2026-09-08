@@ -8,7 +8,7 @@ async function login ( req , res ) {
 
     const { email , password } = req.body ; 
 
-    const user = await prisma.user.findUnique ({ where : { email } });
+    const user = await prisma.user.findUnique ({ where : { email }, include : { department : { select : { name : true } } } });
 
     if (!user){
         return res.status(401).json ({
@@ -40,6 +40,7 @@ async function login ( req , res ) {
             name: user.name,
             email: user.email,
             role: user.role,
+            department: user.department,
             cpBalance: user.cpBalance,
             rttBalance: user.rttBalance,
             mustChangePassword: user.mustChangePassword
@@ -49,7 +50,7 @@ async function login ( req , res ) {
 }
 
 async function getMe(req, res) {
-    const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+    const user = await prisma.user.findUnique({ where: { id: req.user.userId }, include: { department: { select: { name: true } } } });
 
     if (!user) {
         return res.status(404).json({ message: 'Utilisateur introuvable' });
@@ -60,6 +61,7 @@ async function getMe(req, res) {
         name: user.name,
         email: user.email,
         role: user.role,
+        department: user.department,
         cpBalance: user.cpBalance,
         rttBalance: user.rttBalance,
         mustChangePassword: user.mustChangePassword
