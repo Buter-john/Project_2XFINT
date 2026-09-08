@@ -44,7 +44,7 @@ Une cloche en haut de la page indique le nombre de notifications non lues. En cl
 
 ### Le profil
 
-La page Profil montre ses informations (nom, email, rôle, solde de congés) et permet de changer son mot de passe à tout moment (il faut renseigner l'ancien mot de passe).
+La page Profil montre ses informations (nom, email, rôle, département, solde de congés) et permet de changer son mot de passe à tout moment (il faut renseigner l'ancien mot de passe).
 
 ## Ce que les Managers peuvent faire en plus
 
@@ -70,6 +70,7 @@ Sur la page "Admin", le RH peut :
 - voir la liste de tous les comptes
 - désactiver un compte (la personne ne peut plus se connecter, mais ses anciennes demandes restent visibles)
 - réinitialiser le mot de passe de quelqu'un (un mot de passe temporaire est généré, la personne devra le changer à sa prochaine connexion)
+- assigner un manager à un employé, via un menu déroulant qui liste les comptes ayant le rôle Manager (par nom). C'est ce lien qui détermine quelles demandes un manager verra sur la page Validation, et qui apparaît dans le calendrier filtré par équipe
 
 ### Gérer les départements
 

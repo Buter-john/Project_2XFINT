@@ -65,6 +65,8 @@ Il y a trois rôles : EMPLOYE, MANAGER, RH. Un middleware `requireRole` permet d
 
 Pour les Managers, il y a une restriction supplémentaire : ils ne voient que les demandes des utilisateurs dont ils sont le manager direct (`managerId`), pas celles de toute l'entreprise. Cette vérification se fait au niveau de la requête à la base de données, pas juste dans l'interface.
 
+Ce lien `managerId` est assignable depuis la page `/admin` (RH) : un menu déroulant par utilisateur liste les comptes ayant le rôle MANAGER par nom, et envoie leur id via `PUT /api/users/:id`. Sans cette assignation, un manager n'a aucun employé rattaché, donc ne voit rien sur la page Validation ni sur le calendrier filtré par équipe - ce n'est pas un bug, juste une donnée manquante à configurer côté RH.
+
 ## Quelques choix de conception
 
 **Suppression logique plutôt que réelle** : un compte utilisateur désactivé (`isActive: false`) n'est jamais supprimé de la base, pour garder tout l'historique de ses demandes passées. Pareil pour une demande annulée : elle passe au statut CANCELLED, elle n'est jamais supprimée.

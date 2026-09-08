@@ -182,7 +182,7 @@ Renvoie un mot de passe temporaire, et remet `mustChangePassword` a `true`.
 
 ## Profil utilisateur
 
-Accessible sur `/profile` (tous les roles) : infos personnelles, solde de conges, changement de mot de passe.
+Accessible sur `/profile` (tous les roles) : infos personnelles (nom, email, role, departement), solde de conges, changement de mot de passe.
 
 ```bash
 curl -X PATCH http://localhost:5002/api/auth/change-password \
@@ -207,7 +207,15 @@ npm test
 
 ## Console admin (RH)
 
-Accessible sur `/admin` (frontend) avec le compte RH : créer un utilisateur, lister les comptes, activer/désactiver (un compte désactivé ne peut plus se connecter).
+Accessible sur `/admin` (frontend) avec le compte RH : créer un utilisateur, lister les comptes, activer/désactiver (un compte désactivé ne peut plus se connecter), assigner un manager à un employé (menu déroulant par nom, sur chaque ligne de la liste).
+
+```bash
+# Assigner (ou retirer) un manager - accessible au RH uniquement
+curl -X PUT http://localhost:5002/api/users/ID_USER \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN_RH" \
+  -d '{"managerId":"ID_DU_MANAGER"}'
+```
 
 ## Calendrier
 
