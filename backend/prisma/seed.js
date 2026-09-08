@@ -17,6 +17,7 @@ async function main (){
             password: hashedPassword,
             role:'EMPLOYE',
             departmentId:department.id,
+            mustChangePassword: false ,
         },
     });
 
@@ -29,6 +30,7 @@ async function main (){
             password: hashedRhPassword,
             role: 'RH',
             departmentId: department.id,
+            mustChangePassword: false , 
         },
     });
 
