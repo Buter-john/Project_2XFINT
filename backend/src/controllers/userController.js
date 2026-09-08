@@ -9,6 +9,8 @@ async function getUsers (req , res){
         select : { 
             id : true , name: true , email : true , role : true , 
             isActive : true , department : { select : { name : true }},
+            managerId :true, 
+            manager : { select :{ name : true }}, 
         },
         orderBy : { name : 'asc' }, 
     });
