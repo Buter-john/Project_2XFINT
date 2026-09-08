@@ -9,6 +9,8 @@ interface User {
   role: string;
   isActive: boolean;
   department: { name: string };
+  managerId: string | null;
+  manager : { name: string } | null ; 
 
 }
 
@@ -73,6 +75,14 @@ function Admin() {
     setName('');
     setEmail('');
     setPassword('');
+    loadUsers();
+  }
+
+    async function handleAssignManager(userId: string, managerId: string) {
+    await apiFetch(`/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ managerId: managerId || null }),
+    });
     loadUsers();
   }
 
@@ -183,6 +193,20 @@ function Admin() {
                 <p className="text-sm text-gray-500">{u.email} · {u.department.name} · {u.role}</p>
               </div>
               <div className="flex items-center gap-3">
+                {u.role !== 'RH' && (
+                  <select
+                    value={u.managerId ?? ''}
+                    onChange={(e) => handleAssignManager(u.id, e.target.value)}
+                    className="text-sm border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="">Aucun manager</option>
+                    {users
+                      .filter((m) => m.role === 'MANAGER' && m.id !== u.id)
+                      .map((m) => (
+                        <option key={m.id} value={m.id}>{m.name}</option>
+                      ))}
+                  </select>
+                )}
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${u.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
                   {u.isActive ? 'Actif' : 'Inactif'}
                 </span>
