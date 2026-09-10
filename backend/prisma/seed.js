@@ -13,7 +13,7 @@ async function main (){
 
         data : {
             name : 'Sylvie',
-            email: 'sylvie@gmail.com',
+            email: 'sylvie@supherman.com',
             password: hashedPassword,
             role:'EMPLOYE',
             departmentId:department.id,
