@@ -66,7 +66,7 @@ Contrairement au Manager, le RH voit les demandes de **tout le monde** sur la pa
 ### Gérer les comptes utilisateurs
 
 Sur la page "Admin", le RH peut :
-- créer un nouveau compte (nom, email, mot de passe temporaire, rôle, département)
+- créer un nouveau compte (nom, email, mot de passe temporaire, rôle, département) - l'email doit obligatoirement se terminer par `@supherman.com`, sinon la création est refusée
 - voir la liste de tous les comptes
 - désactiver un compte (la personne ne peut plus se connecter, mais ses anciennes demandes restent visibles)
 - réinitialiser le mot de passe de quelqu'un (un mot de passe temporaire est généré, la personne devra le changer à sa prochaine connexion)
