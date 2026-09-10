@@ -63,7 +63,9 @@ Si l'employé n'a plus assez de jours (CP ou RTT) sur son solde pour couvrir la 
 
 ### Voir toutes les demandes
 
-Contrairement au Manager, le RH voit les demandes de **tout le monde** sur la page Validation, pas juste une équipe. Il peut aussi corriger le statut d'une demande déjà traitée, si une erreur a été faite.
+Contrairement au Manager, le RH voit les demandes de **tout le monde** sur la page Validation, pas juste une équipe.
+
+Il peut aussi corriger le statut de **n'importe quelle** demande, même déjà traitée (approuvée, rejetée ou annulée), via un menu déroulant "Corriger le statut" visible uniquement pour son rôle sur chaque ligne. Un commentaire de correction est demandé. Si la correction change une demande vers "Approuvée", le solde CP/RTT est vérifié et déduit comme pour une validation normale ; si elle fait passer une demande approuvée vers un autre statut, les jours déjà déduits sont restitués au solde.
 
 ### Gérer les comptes utilisateurs
 

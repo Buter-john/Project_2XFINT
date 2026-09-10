@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import apiFetch from "../../utils/api";
 import { statusStyle } from "../../utils/statusStyle";
+import { useAuth } from "../../context/AuthContext";
 
 
 interface LeaveRequest {
@@ -18,6 +19,7 @@ interface LeaveRequest {
 
 function validation() {
 
+  const { user } = useAuth();
   const [requests, setRequests] = useState<LeaveRequest[]>([]);
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(true);
@@ -72,6 +74,16 @@ function validation() {
     await apiFetch(`/validation/${id}/reject`, {
       method: 'POST',
       body: JSON.stringify({ comment }),
+    });
+    loadingPending();
+  }
+
+  async function handleCorrect(id: string, newStatus: string) {
+    const comment = window.prompt('Commentaire de correction ?') || 'Correction RH';
+
+    await apiFetch(`/validation/${id}/correct`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: newStatus, comment }),
     });
     loadingPending();
   }
@@ -186,6 +198,22 @@ function validation() {
                       Rejeter
                     </button>
                   </>
+                )}
+                {user?.role === 'RH' && (
+                  <select
+                    key={`correct-${req.id}-${req.status}`}
+                    defaultValue=""
+                    onChange={(e) => {
+                      if (e.target.value) handleCorrect(req.id, e.target.value);
+                    }}
+                    className="text-sm border border-gray-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  >
+                    <option value="" disabled>Corriger le statut</option>
+                    <option value="PENDING">En attente</option>
+                    <option value="APPROVED">Approuvée</option>
+                    <option value="REJECTED">Rejetée</option>
+                    <option value="CANCELLED">Annulée</option>
+                  </select>
                 )}
               </div>
             </div>
