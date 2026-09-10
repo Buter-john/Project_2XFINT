@@ -67,16 +67,20 @@ function Dashboard() {
         formData.append('comment', comment);
         if (document) formData.append('document', document);
 
-        await apiFetch('/requests', {
-            method: 'POST',
-            body: formData,
-        });
+        try {
+            await apiFetch('/requests', {
+                method: 'POST',
+                body: formData,
+            });
 
-        setStartDate('');
-        setEndDate('');
-        setComment('');
-        setDocument(null)
-        loadRequest();
+            setStartDate('');
+            setEndDate('');
+            setComment('');
+            setDocument(null)
+            loadRequest();
+        } catch (err) {
+            alert((err as Error).message);
+        }
     }
 
     async function openDetail(id: string) {
@@ -91,6 +95,11 @@ function Dashboard() {
     }
 
 
+
+    const today = new Date();
+    const prochainConge = requests
+        .filter((r) => r.status === 'APPROVED' && new Date(r.startDate) >= today)
+        .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())[0];
 
     if (loading) return <p className="p-8 text-gray-500">Chargement...</p>
 
@@ -108,7 +117,22 @@ function Dashboard() {
                         <p className="text-sm text-gray-500">RTT restants</p>
                         <p className="text-2xl font-bold text-emerald-600">{user?.rttBalance}</p>
                     </div>
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 px-6 py-4 flex-1">
+                        <p className="text-sm text-gray-500">Demandes en attente</p>
+                        <p className="text-2xl font-bold text-amber-500">
+                            {requests.filter((r) => r.status === 'PENDING').length}
+                        </p>
+                    </div>
                 </div>
+
+                {prochainConge && (
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-xl px-6 py-4 mb-6">
+                        <p className="text-sm text-emerald-700">
+                            Prochain congé : <span className="font-semibold">{prochainConge.type}</span> du{' '}
+                            {prochainConge.startDate.slice(0, 10)} au {prochainConge.endDate.slice(0, 10)}
+                        </p>
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
                     <h2 className="font-semibold text-gray-900 mb-4">Nouvelle demande</h2>

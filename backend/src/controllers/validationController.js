@@ -13,7 +13,18 @@ async function approveRequest ( req , res ){
     if (!request || request.status !== 'PENDING' ){
         return res.status(404).json({
             message : 'Demande introuvable ou Déjà traité',
-        }); 
+        });
+    }
+
+    if (request.type === 'CP' || request.type === 'RTT') {
+        const employee = await prisma.user.findUnique({ where: { id: request.userId } });
+        const currentBalance = request.type === 'CP' ? employee.cpBalance : employee.rttBalance;
+
+        if (Number(currentBalance) < Number(request.workingDays)) {
+            return res.status(400).json({
+                message: `Solde ${request.type} insuffisant (${currentBalance} restants, ${request.workingDays} demandés)`,
+            });
+        }
     }
 
     if (request.type === 'CP'){
@@ -103,6 +114,31 @@ async function approveRequest ( req , res ){
 
         if (!request){
             return res.status(404).json({message : 'Demande introuvable'});
+        }
+
+        const balanceField = request.type === 'CP' ? 'cpBalance' : request.type === 'RTT' ? 'rttBalance' : null;
+
+        if (balanceField) {
+            const wasApproved = request.status === 'APPROVED';
+            const becomesApproved = status === 'APPROVED';
+
+            if (!wasApproved && becomesApproved) {
+                const employee = await prisma.user.findUnique({ where: { id: request.userId } });
+                if (Number(employee[balanceField]) < Number(request.workingDays)) {
+                    return res.status(400).json({
+                        message: `Solde ${request.type} insuffisant (${employee[balanceField]} restants, ${request.workingDays} demandés)`,
+                    });
+                }
+                await prisma.user.update({
+                    where: { id: request.userId },
+                    data: { [balanceField]: { decrement: request.workingDays } },
+                });
+            } else if (wasApproved && !becomesApproved) {
+                await prisma.user.update({
+                    where: { id: request.userId },
+                    data: { [balanceField]: { increment: request.workingDays } },
+                });
+            }
         }
 
         await prisma.leaveRequest.update({

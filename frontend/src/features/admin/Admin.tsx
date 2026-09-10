@@ -8,9 +8,10 @@ interface User {
   email: string;
   role: string;
   isActive: boolean;
+  departmentId: number;
   department: { name: string };
   managerId: string | null;
-  manager : { name: string } | null ; 
+  manager : { name: string } | null ;
 
 }
 
@@ -83,12 +84,16 @@ function Admin() {
     loadUsers();
   }
 
-    async function handleAssignManager(userId: string, managerId: string) {
+  async function handleUpdateUser(userId: string, data: Record<string, unknown>) {
     await apiFetch(`/users/${userId}`, {
       method: 'PUT',
-      body: JSON.stringify({ managerId: managerId || null }),
+      body: JSON.stringify(data),
     });
     loadUsers();
+  }
+
+  async function handleAssignManager(userId: string, managerId: string) {
+    await handleUpdateUser(userId, { managerId: managerId || null });
   }
 
   async function handleResetPassword(id: string) {
@@ -194,8 +199,37 @@ function Admin() {
           {users.map((u) => (
             <div key={u.id} className="flex items-center justify-between px-5 py-4">
               <div>
-                <p className="font-medium text-gray-900">{u.name}</p>
-                <p className="text-sm text-gray-500">{u.email} · {u.department.name} · {u.role}</p>
+                <input
+                  defaultValue={u.name}
+                  onBlur={(e) => {
+                    if (e.target.value && e.target.value !== u.name) {
+                      handleUpdateUser(u.id, { name: e.target.value });
+                    }
+                  }}
+                  className="font-medium text-gray-900 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-emerald-500 focus:outline-none"
+                />
+                <div className="text-sm text-gray-500 flex items-center gap-1 mt-0.5">
+                  <span>{u.email} ·</span>
+                  <select
+                    value={u.departmentId}
+                    onChange={(e) => handleUpdateUser(u.id, { departmentId: Number(e.target.value) })}
+                    className="text-sm text-gray-500 bg-transparent focus:outline-none"
+                  >
+                    {departments.map((d) => (
+                      <option key={d.id} value={d.id}>{d.name}</option>
+                    ))}
+                  </select>
+                  <span>·</span>
+                  <select
+                    value={u.role}
+                    onChange={(e) => handleUpdateUser(u.id, { role: e.target.value })}
+                    className="text-sm text-gray-500 bg-transparent focus:outline-none"
+                  >
+                    <option value="EMPLOYE">Employé</option>
+                    <option value="MANAGER">Manager</option>
+                    <option value="RH">RH</option>
+                  </select>
+                </div>
               </div>
               <div className="flex items-center gap-3">
                 {u.role !== 'RH' && (

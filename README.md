@@ -107,6 +107,7 @@ Toutes les routes ci-dessous nécessitent l'en-tête `Authorization: Bearer <tok
 
 ```bash
 # Créer une demande avec justificatif (multipart/form-data, pas de JSON)
+# Refuse avec 400 si le nombre de jours demandes depasse le solde CP/RTT disponible de l'employe
 curl -X POST http://localhost:5002/api/requests \
   -H "Authorization: Bearer TON_TOKEN" \
   -F "type=CP" -F "startDate=2026-08-10" -F "endDate=2026-08-14" -F "comment=vacances" \
@@ -136,9 +137,9 @@ Routes reservees aux roles `MANAGER` et `RH` :
 
 ```bash
 # Voir toutes les demandes (filtres optionnels : status, type, employeeId, from, to)
-curl "http://localhost:5002/api/requests/pending?status=APPROVED&type=CP" -H "Authorization: Bearer TOKEN_RH"
+curl "http://localhost:5002/api/requests/pending?status=APPROVED&type=CP&from=2026-08-01&to=2026-08-31" -H "Authorization: Bearer TOKEN_RH"
 
-# Approuver
+# Approuver (refuse avec 400 si le solde CP/RTT de l'employe est insuffisant)
 curl -X POST http://localhost:5002/api/validation/ID_DEMANDE/approve -H "Authorization: Bearer TOKEN_RH"
 
 # Rejeter (le motif "comment" est obligatoire)
@@ -208,6 +209,8 @@ npm test
 ## Console admin (RH)
 
 Accessible sur `/admin` (frontend) avec le compte RH : créer un utilisateur, lister les comptes, activer/désactiver (un compte désactivé ne peut plus se connecter), assigner un manager à un employé (menu déroulant par nom, sur chaque ligne de la liste).
+
+Chaque ligne de la liste est aussi directement éditable : nom (champ texte), département et rôle (menus déroulants) - la modification est envoyée dès que le champ perd le focus ou change, sans bouton "Enregistrer" séparé.
 
 ```bash
 # Assigner (ou retirer) un manager - accessible au RH uniquement

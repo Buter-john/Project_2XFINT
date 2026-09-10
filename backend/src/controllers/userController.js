@@ -6,11 +6,11 @@ const prisma = require('../config/prisma');
 async function getUsers (req , res){
 
     const users = await prisma.user.findMany({
-        select : { 
-            id : true , name: true , email : true , role : true , 
-            isActive : true , department : { select : { name : true }},
-            managerId :true, 
-            manager : { select :{ name : true }}, 
+        select : {
+            id : true , name: true , email : true , role : true ,
+            isActive : true , departmentId : true , department : { select : { name : true }},
+            managerId :true,
+            manager : { select :{ name : true }},
         },
         orderBy : { name : 'asc' }, 
     });

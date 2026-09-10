@@ -75,7 +75,9 @@ Ce lien `managerId` est assignable depuis la page `/admin` (RH) : un menu dérou
 
 **Changement de mot de passe obligatoire** : chaque compte créé par le RH a `mustChangePassword: true`. Tant que ce champ est vrai, l'utilisateur est redirigé de force vers une page de changement de mot de passe, peu importe l'URL qu'il essaie d'atteindre.
 
-**Solde de congés** : le solde (CP et RTT) est déduit automatiquement uniquement au moment où une demande est approuvée, pas à la création. Une demande encore en attente ou refusée n'a aucun impact sur le solde.
+**Solde de congés** : le solde (CP et RTT) est déduit automatiquement uniquement au moment où une demande est approuvée, pas à la création. Une demande encore en attente ou refusée n'a aucun impact sur le solde. Avant de décrémenter, `approveRequest` **et** `correctStatus` (`validationController.js`) vérifient que le solde actuel de l'employé couvre bien le nombre de jours demandés - sinon l'action est refusée (400), ce qui empêche un solde de passer négatif. `correctStatus` (utilisé par le RH pour corriger le statut d'une demande déjà traitée) gère aussi le sens inverse : si une demande était approuvée et qu'on la corrige vers un autre statut, les jours déjà déduits sont restitués au solde.
+
+**Double vérification du solde** : en plus du contrôle à l'approbation, `createRequest` (`requestController.js`) vérifie aussi le solde **dès la création** d'une demande CP ou RTT. Si le nombre de jours dépasse le solde disponible, la demande est refusée avant même d'être insérée en base - elle n'apparaît donc jamais dans la liste des demandes à traiter, ni chez le manager ni chez le RH. Le contrôle à l'approbation reste nécessaire en complément (le solde a pu changer entre la création et l'approbation, si d'autres demandes ont été validées entre-temps).
 
 ## Documentation de l'API
 

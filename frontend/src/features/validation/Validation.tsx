@@ -23,6 +23,8 @@ function validation() {
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState('');
   const [search, setSearch] = useState('');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState('desc');
   const [page, setPage] = useState(1);
@@ -35,6 +37,8 @@ function validation() {
     if (status) params.set('status', status);
     if (type) params.set('type', type);
     if (search) params.set('search', search);
+    if (from) params.set('from', from);
+    if (to) params.set('to', to);
     params.set('sortBy', sortBy);
     params.set('sortOrder', sortOrder);
     params.set('page', String(page));
@@ -50,11 +54,11 @@ function validation() {
 
   useEffect(() => {
     loadingPending();
-  }, [status, type, search, sortBy, sortOrder, page]);
+  }, [status, type, search, from, to, sortBy, sortOrder, page]);
 
   useEffect(() => {
     setPage(1);
-  }, [status, type, search, sortBy, sortOrder]);
+  }, [status, type, search, from, to, sortBy, sortOrder]);
 
   async function handleApprove(id: string) {
 
@@ -109,6 +113,21 @@ function validation() {
             placeholder="Rechercher un employé"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+
+          <input
+            type="date"
+            title="A partir du"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          />
+          <input
+            type="date"
+            title="Jusqu'au"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
             className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
 
