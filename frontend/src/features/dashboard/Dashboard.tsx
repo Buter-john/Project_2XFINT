@@ -1,6 +1,6 @@
 import { useState, useEffect, type SubmitEvent } from "react";
 
-
+import { Paperclip } from "lucide-react";
 import apiFetch from "../../utils/api";
 import { useAuth } from "../../context/AuthContext";
 import { statusStyle } from "../../utils/statusStyle";
@@ -124,11 +124,15 @@ function Dashboard() {
                             <option value="MALADIE">Maladie</option>
                             <option value="FORMATION">Formation</option>
                         </select>
-                        <input
-                            type="file"
-                            onChange={(e) => setDocument(e.target.files ? e.target.files[0] : null)}
-                            className="text-sm text-gray-500"
-                        />
+                        <label className="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer text-sm text-gray-500 hover:border-emerald-400 hover:bg-emerald-50/40 transition-colors">
+                            <Paperclip size={16} className="text-gray-400" />
+                            {document ? document.name : "Joindre un justificatif"}
+                            <input
+                                type="file"
+                                onChange={(e) => setDocument(e.target.files ? e.target.files[0] : null)}
+                                className="hidden"
+                            />
+                        </label>
                         <input
                             type="date"
                             value={startDate}
