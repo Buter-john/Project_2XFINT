@@ -144,6 +144,9 @@ function validation() {
                   {req.user.name} — {req.type} — du {req.startDate.slice(0, 10)} au {req.endDate.slice(0, 10)}
                 </p>
                 <p className="text-sm text-gray-500">{req.workingDays} jours</p>
+                {req.comment && (
+                  <p className="text-sm text-gray-600 italic mt-1">"{req.comment}"</p>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusStyle(req.status)}`}>
