@@ -96,7 +96,7 @@ Connexion :
 ```bash
 curl -X POST http://localhost:5002/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"sylvie@gmail.com","password":"password123"}'
+  -d '{"email":"rh@supherman.com","password":"Suph3rm4n!"}'
 ```
 
 La réponse contient un token JWT (valable 8h), à passer ensuite dans l'en-tête `Authorization: Bearer <token>` pour accéder aux routes protégées.
