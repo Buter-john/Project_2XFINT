@@ -21,6 +21,12 @@ async function createUser(req , res){
 
     const { name , email , password , role , departmentId } = req.body;
 
+    if (!email || !email.endsWith('@supherman.com')) {
+        return res.status(400).json({
+            message : 'L\'email doit etre une adresse @supherman.com',
+        });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({

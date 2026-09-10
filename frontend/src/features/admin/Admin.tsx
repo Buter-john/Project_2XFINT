@@ -68,6 +68,11 @@ function Admin() {
       return;
     }
 
+    if (!email.endsWith('@supherman.com')) {
+      alert('L\'email doit être une adresse @supherman.com');
+      return;
+    }
+
     await apiFetch('/users', {
       method: 'POST',
       body: JSON.stringify({ name, email, password, role, departmentId: Number(departmentId) }),
