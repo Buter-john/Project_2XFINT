@@ -80,7 +80,7 @@ L'API tourne sur `http://localhost:5002` (le port dépend de la valeur définie 
 
 | Email | Mot de passe | Rôle |
 |---|---|---|
-| sylvie@gmail.com | password123 | EMPLOYE |
+| sylvie@supherman.com | password123 | EMPLOYE |
 | rh@supherman.com | Suph3rm4n! | RH |
 
 ## Tester l'API
