@@ -34,6 +34,18 @@ async function createRequest(req, res) {
 
     const workingDays = calculateWorkingDays(startDate, endDate);
 
+    if (type === 'CP' || type === 'RTT') {
+        const employee = await prisma.user.findUnique({ where: { id: userId } });
+        const balanceField = type === 'CP' ? 'cpBalance' : 'rttBalance';
+        const balance = employee[balanceField];
+
+        if (Number(workingDays) > Number(balance)) {
+            return res.status(400).json({
+                message: `Solde ${type} dépassé, vous avez droit à ${balance} jour(s), pas ${workingDays}`,
+            });
+        }
+    }
+
     const request = await prisma.leaveRequest.create({
         data: {
             userId,
