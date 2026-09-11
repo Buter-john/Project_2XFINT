@@ -1,109 +1,119 @@
-const bcrypt = require ('bcryptjs');
+const bcrypt = require('bcryptjs');
 const prisma = require('../config/prisma');
 
 
 
-async function getUsers (req , res){
+async function getUsers(req, res) {
 
     const users = await prisma.user.findMany({
-        select : {
-            id : true , name: true , email : true , role : true ,
-            isActive : true , departmentId : true , department : { select : { name : true }},
-            managerId :true,
-            manager : { select :{ name : true }},
+        select: {
+            id: true, name: true, email: true, role: true,
+            isActive: true, departmentId: true, department: { select: { name: true } },
+            managerId: true,
+            manager: { select: { name: true } },
         },
-        orderBy : { name : 'asc' }, 
+        orderBy: { name: 'asc' },
     });
     res.json(users);
 }
 
-async function createUser(req , res){
+async function createUser(req, res) {
 
-    const { name , email , password , role , departmentId } = req.body;
+    const { name, email, password, role, departmentId } = req.body;
 
     if (!email || !email.endsWith('@supherman.com')) {
         return res.status(400).json({
-            message : 'L\'email doit etre une adresse @supherman.com',
+            message: 'L\'email doit etre une adresse @supherman.com',
+        });
+    }
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+
+    if (existing) {
+        return res.status(409).json({
+            message: "Un compte existe déjà avec cette adresse"
         });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-        data : {
-            name ,
-            email , 
-            role , 
-            password : hashedPassword , 
-            departmentId, 
+        data: {
+            name,
+            email,
+            role,
+            password: hashedPassword,
+            departmentId,
         },
     });
 
-    res.status(201).json({ id : user.id ,
-        name : user.name , email : user.email ,
-        role : user.role }); 
-    
-}
-
-
-async function toggleUserActive(req , res){
-        const { id } = req.params ; 
-
-        const existing = await prisma.user.findUnique({
-            where :{id}
-        }); 
-
-
-        if (!existing){
-            return res.status(404).json({
-                message : 'utiliser introuvable',
-            });
-        }
-
-
-        const updated = await prisma.user.update({
-            where :{id},
-            data: { isActive : !existing.isActive }, 
-        }); 
-
-        res.json({ id : updated.id , isActive : updated.isActive});
+    res.status(201).json({
+        id: user.id,
+        name: user.name, email: user.email,
+        role: user.role
+    });
 
 }
 
 
-async function updateUser(req , res){
+async function toggleUserActive(req, res) {
     const { id } = req.params;
-    const { name , role , departmentId , managerId} = req.body;
+
+    const existing = await prisma.user.findUnique({
+        where: { id }
+    });
+
+
+    if (!existing) {
+        return res.status(404).json({
+            message: 'utiliser introuvable',
+        });
+    }
+
 
     const updated = await prisma.user.update({
-        where :{ id },
-        data :{
+        where: { id },
+        data: { isActive: !existing.isActive },
+    });
+
+    res.json({ id: updated.id, isActive: updated.isActive });
+
+}
+
+
+async function updateUser(req, res) {
+    const { id } = req.params;
+    const { name, role, departmentId, managerId } = req.body;
+
+    const updated = await prisma.user.update({
+        where: { id },
+        data: {
             name,
             role,
             departmentId,
-            managerId, 
+            managerId,
         }
     })
 
-    res.json({ id : updated.id , name: updated.name , email : updated.email , role : updated.role , managerId : updated.managerId})
+    res.json({ id: updated.id, name: updated.name, email: updated.email, role: updated.role, managerId: updated.managerId })
 }
 
-async function resetPassword(req , res){
+async function resetPassword(req, res) {
 
-    const {id}= req.params;
+    const { id } = req.params;
     const tempPassword = Math.random().toString(36).slice(-8);
 
     const hashed = await bcrypt.hash(tempPassword, 10);
 
     await prisma.user.update({
-        where : {id},
-        data :{ password : hashed , mustChangePassword : true },
+        where: { id },
+        data: { password: hashed, mustChangePassword: true },
     });
 
     res.json({
-        message : 'mot de passe réinitialisé' , tempPassword 
+        message: 'mot de passe réinitialisé', tempPassword
     })
 
 }
 
-module.exports = { getUsers , createUser , toggleUserActive , updateUser , resetPassword };
+module.exports = { getUsers, createUser, toggleUserActive, updateUser, resetPassword };
