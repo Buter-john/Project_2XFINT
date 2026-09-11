@@ -5,6 +5,7 @@ Reconstruction pédagogique du portail de gestion de congés SUP Herman : une ap
 Fonctionnalités : authentification JWT avec 3 rôles (EMPLOYE, MANAGER, RH), CRUD des demandes de congés, calcul automatique des jours ouvrés, validation/rejet par le RH avec notifications, calendrier global des absences, gestion des comptes utilisateurs (création, désactivation logique), tests automatisés, documentation Swagger.
 
 Voir aussi :
+- [Dépôt GitHub](https://github.com/Buter-john/Project_2XFINT)
 - [MANUEL_UTILISATEUR.md](./MANUEL_UTILISATEUR.md) — comment utiliser l'application (par rôle)
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — documentation technique (stack, schéma de données, choix de conception)
 
