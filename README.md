@@ -212,6 +212,8 @@ Accessible sur `/admin` (frontend) avec le compte RH : créer un utilisateur, li
 
 Chaque ligne de la liste est aussi directement éditable : nom (champ texte), département et rôle (menus déroulants) - la modification est envoyée dès que le champ perd le focus ou change, sans bouton "Enregistrer" séparé.
 
+La création d'un compte renvoie une erreur 409 si l'email existe déjà, et 400 s'il ne se termine pas par `@supherman.com`. Une création réussie affiche une confirmation visuelle (encart vert) qui disparaît automatiquement après 3 secondes.
+
 ```bash
 # Assigner (ou retirer) un manager - accessible au RH uniquement
 curl -X PUT http://localhost:5002/api/users/ID_USER \

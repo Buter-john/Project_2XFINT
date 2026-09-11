@@ -71,6 +71,8 @@ Ce lien `managerId` est assignable depuis la page `/admin` (RH) : un menu dérou
 
 **Domaine d'email imposé** : la création d'un compte (`createUser`) exige un email se terminant par `@supherman.com`. Cette règle est vérifiée à deux endroits : côté frontend (`Admin.tsx`, pour un retour immédiat sans aller-retour serveur) et côté backend (`userController.js`, la vraie protection - un appel direct à l'API avec un autre domaine est rejeté avec un 400). Toujours dupliquer une validation métier côté serveur, même si elle existe déjà côté client : le frontend peut être contourné, jamais le backend.
 
+**Email en double** : avant de créer un compte, `createUser` vérifie avec `prisma.user.findUnique({ where: { email } })` qu'aucun utilisateur n'a déjà cet email, et renvoie une 409 si c'est le cas. Sans cette vérification explicite, la contrainte `@unique` du schéma Prisma finit quand même par bloquer la création, mais en levant une exception technique brute (non attrapée), renvoyée au frontend comme une page d'erreur HTML au lieu d'un message JSON propre.
+
 **Suppression logique plutôt que réelle** : un compte utilisateur désactivé (`isActive: false`) n'est jamais supprimé de la base, pour garder tout l'historique de ses demandes passées. Pareil pour une demande annulée : elle passe au statut CANCELLED, elle n'est jamais supprimée.
 
 **Changement de mot de passe obligatoire** : chaque compte créé par le RH a `mustChangePassword: true`. Tant que ce champ est vrai, l'utilisateur est redirigé de force vers une page de changement de mot de passe, peu importe l'URL qu'il essaie d'atteindre.

@@ -70,7 +70,7 @@ Il peut aussi corriger le statut de **n'importe quelle** demande, même déjà t
 ### Gérer les comptes utilisateurs
 
 Sur la page "Admin", le RH peut :
-- créer un nouveau compte (nom, email, mot de passe temporaire, rôle, département) - l'email doit obligatoirement se terminer par `@supherman.com`, sinon la création est refusée
+- créer un nouveau compte (nom, email, mot de passe temporaire, rôle, département) - l'email doit obligatoirement se terminer par `@supherman.com` et ne pas déjà être utilisé par un autre compte, sinon la création est refusée avec un message d'erreur clair. Une fois créé, un encart vert confirme le succès (nom de la personne créée)
 - voir la liste de tous les comptes
 - désactiver un compte (la personne ne peut plus se connecter, mais ses anciennes demandes restent visibles)
 - réinitialiser le mot de passe de quelqu'un (un mot de passe temporaire est généré, la personne devra le changer à sa prochaine connexion)
