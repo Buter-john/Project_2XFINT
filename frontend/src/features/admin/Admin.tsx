@@ -1,5 +1,6 @@
 import { useState, useEffect, type SubmitEvent } from "react";
 import apiFetch from "../../utils/api";
+import { CheckCircle } from "lucide-react";
 
 interface User {
 
@@ -11,7 +12,7 @@ interface User {
   departmentId: number;
   department: { name: string };
   managerId: string | null;
-  manager : { name: string } | null ;
+  manager: { name: string } | null;
 
 }
 
@@ -32,6 +33,7 @@ function Admin() {
   const [role, setRole] = useState('EMPLOYE');
   const [departmentId, setDepartmentId] = useState('');
   const [newDeptName, setNewDeptName] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   function loadUsers() {
     apiFetch('/users')
@@ -74,14 +76,20 @@ function Admin() {
       return;
     }
 
-    await apiFetch('/users', {
-      method: 'POST',
-      body: JSON.stringify({ name, email, password, role, departmentId: Number(departmentId) }),
-    })
-    setName('');
-    setEmail('');
-    setPassword('');
-    loadUsers();
+    try {
+      await apiFetch('/users', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password, role, departmentId: Number(departmentId) }),
+      });
+      setName('');
+      setEmail('');
+      setPassword('');
+      loadUsers();
+      setSuccessMessage(`Création avec succès de l'utilisateur : ${name}`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (err) {
+      alert((err as Error).message)
+    }
   }
 
   async function handleUpdateUser(userId: string, data: Record<string, unknown>) {
@@ -115,7 +123,13 @@ function Admin() {
     <div className="min-h-screen bg-slate-50 p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Gestion des utilisateurs</h1>
-
+        {successMessage && (
+          <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg px-4 py-3 mb-4">
+            <CheckCircle size={18} />
+            <span className="text-sm font-medium">{successMessage}</span>
+          </div>
+        )
+        }
         <div className="grid grid-cols-2 gap-4 mb-6">
           <form onSubmit={handleCreate} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <h2 className="font-semibold text-gray-900 mb-4">Nouvel utilisateur</h2>
